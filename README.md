@@ -8,8 +8,8 @@ SAWFISH is the first algorithm to efficiently discover similarity inclusion depe
 1. The code is written using Java 8.
 2. Download the available code as a zip file or clone the SAWFISH repository.
 3. Install dependencies and build the project with `mvn install`.
-4. a) SAWFISH was developed for Metanome. Therefore, the easiest way to try it out is to import it into a running Metanome instance. See the official [webpage](https://metanome.de) on how to set it up.
-b) Alternatively, the project contains a `MetanomeMock` class that can be used to directly run the algorithm.
+4. a) SAWFISH was developed for Metanome. Therefore, the easiest way to try it out is to import it into a running Metanome instance. See the official [webpage](https://metanome.de) on how to set it up.  
+b) Alternatively, the project contains a `MetanomeMock` class that can be used to directly run the algorithm.  
 c) Lastly, you can make use of the [metanome-cli](https://github.com/sekruse/metanome-cli) if you want a convenient cli interface.
 
 ## Configuration
