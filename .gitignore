@@ -1,0 +1,9 @@
+/target
+/.settings
+.classpath
+.project
+similarity_ind.iml
+.idea
+/results
+/io
+/data/*
