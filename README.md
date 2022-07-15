@@ -1,5 +1,4 @@
 # SAWFISH
-Developed at the Information Systems Group of the Hasso Plattner Institute.
 
 SAWFISH is the first algorithm to efficiently discover similarity inclusion dependencies.
 
