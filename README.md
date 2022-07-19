@@ -4,7 +4,7 @@ SAWFISH is the first algorithm to efficiently discover similarity inclusion depe
 
 ## Setup
 
-1. The code is written using Java 8.
+1. The code is written using Java 11.
 2. Download the available code as a zip file or clone the SAWFISH repository.
 3. Install dependencies and build the project with `mvn install`.
 4. a) SAWFISH was developed for Metanome. Therefore, the easiest way to try it out is to import it into a running Metanome instance. See the official [webpage](https://metanome.de) on how to set it up.  
@@ -18,13 +18,14 @@ To run the algorithm, only an input file and the edit distance threshold are req
 Other configuration options are listed below:
 
 - `editDistanceThreshold`: absolute edit distance threshold
+- `similarityThreshold`: normalized edit distance threshold/Jaccard similarity threshold
+- `tokenMode`: turn on the token mode, which computes the Jaccard similarity instead of edit distance
 - `ignoreShortStrings`: ignore strings that are shorter than the edit distance threshold, only required for comparison to PassJoin
 - `memoryCheckFrequency`: number of values until a memory check occurs
 - `maxMemoryUsagePercentage`: percentage of available memory SAWFISH should use
-- `writeDataErrors`: creates an output file with the indirect matches that were used during validation
-- `measureTime`: creates an output file with fine grained time stats
+- `writeDataErrors`: creates an output file with the indirect matches that were found during validation
+- `measureTime`: creates an output file with fine-grained time stats
 - `ignoreNumericColumns`: ignore columns that only contain numeric values
-- `similarityThreshold`: normalized edit distance threshold
 - `hybridMode`: turns on the hybrid mode of the normalized edit distance computation in SAWFISH
 
 ## Repeatibility

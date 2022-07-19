@@ -50,10 +50,11 @@ public class MetanomeMock {
                 SawfishInterface sawfish = new SawfishInterface();
                 sawfish.setRelationalInputConfigurationValue(SawfishInterface.Identifier.INPUT_FILES.name(), inputGenerators.toArray(new RelationalInputGenerator[0]));
                 sawfish.setIntegerConfigurationValue(SawfishInterface.Identifier.editDistanceThreshold.name(), editDistanceThreshold);
+                //sawfish.setStringConfigurationValue(SawfishInterface.Identifier.similarityThreshold.name(), "0.4");
+                sawfish.setBooleanConfigurationValue(SawfishInterface.Identifier.tokenMode.name(), true);
                 sawfish.setBooleanConfigurationValue(SawfishInterface.Identifier.ignoreShortStrings.name(), false);
                 sawfish.setBooleanConfigurationValue(SawfishInterface.Identifier.measureTime.name(), false);
                 sawfish.setBooleanConfigurationValue(SawfishInterface.Identifier.ignoreNumericColumns.name(), false);
-                //sawfish.setStringConfigurationValue(SawfishInterface.Identifier.similarityThreshold.name(), "0.9");
                 //sawfish.setBooleanConfigurationValue(SawfishInterface.Identifier.hybridMode.name(), true);
                 sawfish.setResultReceiver(resultReceiver);
                 sawfish.setTempFileGenerator(new TempFileGenerator());

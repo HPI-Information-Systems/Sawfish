@@ -1,6 +1,10 @@
 package de.metanome.algorithms.sawfish;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.regex.Pattern;
 
 public class Utils {
     static class ColumnWithSize implements Comparable<ColumnWithSize> {
@@ -15,6 +19,34 @@ public class Utils {
         @Override
         public int compareTo(ColumnWithSize columnWithSize) {
             return (int) (columnWithSize.size - this.size);
+        }
+    }
+
+    static class SubstringInformation {
+        public byte minPos;
+        public byte maxPos;
+        public byte segmentLength;
+
+        public SubstringInformation(byte minPos, byte maxPos, byte segmentLength) {
+            this.minPos = minPos;
+            this.maxPos = maxPos;
+            this.segmentLength = segmentLength;
+        }
+    }
+
+    // inputLength -> queryLength -> segment -> substringInformation
+    public static HashMap<Integer, HashMap<Integer, ArrayList<Utils.SubstringInformation>>> substringInfos = new HashMap<>();
+    public static int[][] editDistanceBuffer;
+
+    public static Pattern delimiterPattern = Pattern.compile("\\s+");
+
+    public static int getElementLength(String string, boolean tokenMode) {
+        if (tokenMode) {
+            HashSet<String> set = new HashSet<>(2);
+            set.addAll(Arrays.asList(delimiterPattern.split(string)));
+            return set.size();
+        } else {
+            return string.length();
         }
     }
 
@@ -46,12 +78,65 @@ public class Utils {
         return segmentIndex * segmentLength;
     }
 
+    static public ArrayList<ArrayList<SubstringableString>> generateSubstrings(SubstringableString input, ArrayList<SubstringInformation> substringInformation, int segmentCount, int queriedLength) {
+        ArrayList<ArrayList<SubstringableString>> result = new ArrayList<>(segmentCount);
+        if (segmentCount > queriedLength) {
+            ArrayList<SubstringableString> allCharacters = new ArrayList<>(input.length());
+            for (int i = 0; i < input.length(); i++) {
+                allCharacters.add(input.substring(i, i + 1));
+            }
+            for (int i = 0; i < segmentCount - queriedLength; i++) {
+                result.add(new ArrayList<>(0));
+            }
+            for (int i = segmentCount - queriedLength; i < segmentCount; i++) {
+                result.add(allCharacters);
+            }
+        } else {
+            for (SubstringInformation s : substringInformation) {
+                ArrayList<SubstringableString> curr = new ArrayList<>();
+                for (int j = s.minPos; j <= s.maxPos; j++) {
+                    curr.add(input.substring(j - 1, j - 1 + s.segmentLength));
+                }
+                result.add(curr);
+            }
+        }
+        return result;
+    }
+
+    static public ArrayList<SubstringInformation> generateSubstringInformation(int segmentCount, int inputLength, int queriedLength) {
+        if (segmentCount > queriedLength) return new ArrayList<>(0);
+
+        ArrayList<SubstringInformation> result = new ArrayList<>(segmentCount);
+        int lengthDifference = inputLength - queriedLength;
+
+        int startPosition = 1;
+        int segmentLength = queriedLength / segmentCount;
+        int shortSegments = segmentCount - (queriedLength % segmentCount);
+        for (int i = 1; i <= segmentCount; i++) {
+            int minL = startPosition - i + 1;
+            int minR = startPosition + lengthDifference - (segmentCount - 1 + 1 - i);
+            int minPos = Math.max(1, Math.max(minL, minR));
+
+            int maxL = startPosition + i - 1;
+            int maxR = startPosition + lengthDifference + (segmentCount - 1 + 1 - i);
+            int maxPos = Math.min(inputLength - segmentLength + 1, Math.min(maxL, maxR));
+
+            result.add(new SubstringInformation((byte) minPos, (byte) maxPos, (byte) segmentLength));
+
+            startPosition += segmentLength;
+
+            if (i == shortSegments)
+                segmentLength++;
+        }
+        return result;
+    }
+
     static public ArrayList<ArrayList<SubstringableString>> generateSubstrings(SubstringableString input, int segmentCount, int queriedLength) {
         ArrayList<ArrayList<SubstringableString>> result = new ArrayList<>(segmentCount);
         if (segmentCount > queriedLength) {
             ArrayList<SubstringableString> allCharacters = new ArrayList<>(input.length());
             for (int i = 0; i < input.length(); i++) {
-                allCharacters.add(input.substring(i, i+1));
+                allCharacters.add(input.substring(i, i + 1));
             }
             for (int i = 0; i < segmentCount - queriedLength; i++) {
                 result.add(new ArrayList<>(0));

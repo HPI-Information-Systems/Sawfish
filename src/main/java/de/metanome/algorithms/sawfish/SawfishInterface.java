@@ -14,7 +14,7 @@ public class SawfishInterface extends Sawfish
         implements InclusionDependencyAlgorithm, RelationalInputParameterAlgorithm, IntegerParameterAlgorithm, BooleanParameterAlgorithm, StringParameterAlgorithm, TempFileAlgorithm {
 
     public enum Identifier {
-        editDistanceThreshold, INPUT_FILES, ignoreShortStrings, memoryCheckFrequency, maxMemoryUsagePercentage, writeDataErrors, measureTime, ignoreNumericColumns, similarityThreshold, hybridMode
+        editDistanceThreshold, INPUT_FILES, ignoreShortStrings, memoryCheckFrequency, maxMemoryUsagePercentage, showErrors, measureTime, ignoreNumericColumns, similarityThreshold, hybridMode, tokenMode
     }
 
     @Override
@@ -30,12 +30,11 @@ public class SawfishInterface extends Sawfish
         String[] defaultStringParamerter = {"0.0"};
         similarityThreshold.setDefaultValues(defaultStringParamerter);
         conf.add(similarityThreshold);
-        // Compatibility Option for Baseline
         ConfigurationRequirementBoolean ignoreShortStrings = new ConfigurationRequirementBoolean(Identifier.ignoreShortStrings.name());
         Boolean[] ignoreShortStringsDefault = {true};
         ignoreShortStrings.setDefaultValues(ignoreShortStringsDefault);
         conf.add(ignoreShortStrings);
-        ConfigurationRequirementBoolean showErrors = new ConfigurationRequirementBoolean(Identifier.writeDataErrors.name());
+        ConfigurationRequirementBoolean showErrors = new ConfigurationRequirementBoolean(Identifier.showErrors.name());
         Boolean[] defaultBooleanParameter = {false};
         showErrors.setDefaultValues(defaultBooleanParameter);
         conf.add(showErrors);
@@ -56,6 +55,9 @@ public class SawfishInterface extends Sawfish
         ConfigurationRequirementBoolean hybridMode = new ConfigurationRequirementBoolean(Identifier.hybridMode.name());
         hybridMode.setDefaultValues(defaultBooleanParameter);
         conf.add(hybridMode);
+        ConfigurationRequirementBoolean tokenMode = new ConfigurationRequirementBoolean(Identifier.tokenMode.name());
+        tokenMode.setDefaultValues(defaultBooleanParameter);
+        conf.add(tokenMode);
 
         return conf;
     }
@@ -67,7 +69,7 @@ public class SawfishInterface extends Sawfish
 
     @Override
     public String getDescription() {
-        return "SAWFISH is the first algorithm to efficiently discover Similarity Inclusion Dependency Discovery";
+        return "Similarity Inclusion Dependency Discovery";
     }
 
     @Override
@@ -93,11 +95,7 @@ public class SawfishInterface extends Sawfish
     @Override
     public void setIntegerConfigurationValue(String identifier, Integer... values) throws AlgorithmConfigurationException {
         if (identifier.equals(Identifier.editDistanceThreshold.name())) {
-            if (this.editDistanceManager == null || this.editDistanceManager.isNullInitialized()) {
-                this.editDistanceManager = new EditDistanceManager(values[0]);
-            } else if (values[0] != 0) {
-                throw new AlgorithmConfigurationException("Please use either an absolute or a normalized edit distance.");
-            }
+            this.absoluteEditDistance = values[0];
         } else if (identifier.equals(Identifier.memoryCheckFrequency.name())) {
             this.memoryCheckFrequency = values[0];
         } else if (identifier.equals(Identifier.maxMemoryUsagePercentage.name())) {
@@ -111,7 +109,7 @@ public class SawfishInterface extends Sawfish
     public void setBooleanConfigurationValue(String identifier, Boolean... values) throws AlgorithmConfigurationException {
         if (identifier.equals(Identifier.ignoreShortStrings.name())) {
             this.ignoreShortStrings = values[0];
-        } else if (identifier.equals(Identifier.writeDataErrors.name())) {
+        } else if (identifier.equals(Identifier.showErrors.name())) {
             this.showErrors = values[0];
         } else if (identifier.equals(Identifier.measureTime.name())) {
             this.measureTime = values[0];
@@ -119,6 +117,8 @@ public class SawfishInterface extends Sawfish
             this.ignoreNumericColumns = values[0];
         } else if (identifier.equals(Identifier.hybridMode.name())) {
             this.hybridMode = values[0];
+        } else if (identifier.equals(Identifier.tokenMode.name())) {
+            this.tokenMode = values[0];
         } else {
             throw new AlgorithmConfigurationException("Unknown identifier: " + identifier);
         }
@@ -127,12 +127,7 @@ public class SawfishInterface extends Sawfish
     @Override
     public void setStringConfigurationValue(String identifier, String... values) throws AlgorithmConfigurationException {
         if (identifier.equals(Identifier.similarityThreshold.name())) {
-            float simThreshold = Float.parseFloat(values[0]);
-            if (this.editDistanceManager == null || (this.editDistanceManager.isNullInitialized() && simThreshold != 0f)) {
-                this.editDistanceManager = new EditDistanceManager(simThreshold);
-            } else if (simThreshold != 0f) {
-                throw new AlgorithmConfigurationException("Please use either an absolute or a normalized edit distance.");
-            }
+            this.similarityThreshold = Float.parseFloat(values[0]);
         } else {
             throw new AlgorithmConfigurationException("Unknown identifier: " + identifier);
         }

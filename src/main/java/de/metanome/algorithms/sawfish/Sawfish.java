@@ -1,6 +1,5 @@
 package de.metanome.algorithms.sawfish;
 
-import de.metanome.algorithm_integration.AlgorithmConfigurationException;
 import de.metanome.algorithm_integration.AlgorithmExecutionException;
 import de.metanome.algorithm_integration.ColumnIdentifier;
 import de.metanome.algorithm_integration.ColumnPermutation;
@@ -20,22 +19,27 @@ public class Sawfish {
     protected InclusionDependencyResultReceiver resultReceiver = null;
     protected boolean ignoreShortStrings = true;
     protected int memoryCheckFrequency = 100;
-    protected int maxMemoryUsagePercentage = 80;
+    protected int maxMemoryUsagePercentage = 70;
     protected boolean showErrors = false;
     protected boolean measureTime = false;
     protected boolean ignoreNumericColumns = false;
-    protected boolean hybridMode = false;
+    protected boolean statisticsMode = false;
+    protected boolean sampleMode = false;
+    protected boolean distinctMode = false;
     long availableMemory = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getMax();
     long maxMemoryUsage = (long) (availableMemory * (maxMemoryUsagePercentage / 100.0f));
     protected FileGenerator tempFileGenerator;
-    EditDistanceManager editDistanceManager = null;
+    protected int absoluteEditDistance = 0;
+    protected float similarityThreshold = 0f;
+    protected boolean hybridMode = false;
+    protected boolean tokenMode = false;
+    SimilarityMeasureManager similarityMeasureManager = null;
 
     protected final ArrayList<String[]> indexToRelationColumn = new ArrayList<>();
-    protected ArrayList<InvertedSegmentIndex> invertedIndexByColumn;
+    protected ArrayList<InvertedIndex> invertedIndexByColumn;
     private final ArrayList<HashMap<Integer, File>> columnLengthFiles = new ArrayList<>();
     private final ArrayList<ColumnStats> columnStats = new ArrayList<>();
-    private final ArrayList<HashMap<Integer, HashSet<String>>> allValues = new ArrayList<>();
-    private final ArrayList<HashMap<Integer, ArrayList<SubstringableString>>> allNewValues = new ArrayList<>();
+    private final ArrayList<HashMap<Integer, ArrayList<SubstringableString>>> allValues = new ArrayList<>();
     private final ArrayList<Long> columnSizes = new ArrayList<>();
     HashSet<Integer> needsDeduplication = new HashSet<>();
     HashSet<Integer> markAsDeleted = new HashSet<>();
@@ -45,27 +49,42 @@ public class Sawfish {
     ArrayList<HashSet<Integer>> possibleDependentsList;
     int[] possibleReferences;
     ArrayList<TimingStats> timingStats = null;
-    int[][] editDistanceBuffer;
     HashMap<Integer, HashMap<Integer, LinkedList<InvertedSegmentIndex.NonDirectMatch>>> errors = null;
 
     public void execute() throws AlgorithmExecutionException {
-        if (hybridMode) {
-            if (editDistanceManager.isNormalizedMode()) {
-                editDistanceManager.setHybridMode();
-            } else {
-                throw new AlgorithmConfigurationException("Hybrid Mode only applicable for similarity threshold");
-            }
+        this.similarityMeasureManager = new SimilarityMeasureManager(absoluteEditDistance, similarityThreshold, hybridMode, tokenMode);
+
+        if (sampleMode) {
+            generateSampleBase();
+            return;
+        } else if (distinctMode) {
+            generateDistinctCounts();
+            return;
+        } else if (statisticsMode) {
+            generateStatistics();
+            return;
         }
 
+        //long start = System.nanoTime();
         int numAllColumns = readInput();
+        //long inputDone = System.nanoTime();
+        //System.out.println("input reading: " + (inputDone - start));
         generateCandidates(numAllColumns);
         initializeOtherDataStructures(numAllColumns);
 
         System.out.println("Preprocessing done!");
+        //long prep = System.nanoTime();
+        //System.out.println("preprocessing: " + (prep - inputDone));
 
         long indexingTime = validateCandidates(numAllColumns);
+        //System.out.println("validation: " + (System.nanoTime() - prep));
 
         outputResults(numAllColumns, indexingTime);
+        /*long sum = 0L;
+        for (GarbageCollectorMXBean gc : ManagementFactory.getGarbageCollectorMXBeans()) {
+            sum += gc.getCollectionTime();
+        }
+        System.out.println("gc time: " + sum);*/
     }
 
     private void outputResults(int numAllColumns, long indexingTime) throws AlgorithmExecutionException {
@@ -102,41 +121,62 @@ public class Sawfish {
             RelationalInput input = inputGenerator.generateNewCopy();
             int[] numValuesInColumn = new int[input.numberOfColumns()];
             long[] currColumnSizes = new long[input.numberOfColumns()];
+            ArrayList<HashMap<Integer, HashSet<SubstringableString>>> deduplicatedColumns = new ArrayList<>(input.numberOfColumns());
             for (int i = 0; i < input.numberOfColumns(); i++) {
                 indexToRelationColumn.add(columnOffset + i, new String[]{input.relationName(), input.columnNames().get(i)});
                 columnStats.add(new ColumnStats());
                 allValues.add(new HashMap<>());
-                allNewValues.add(new HashMap<>());
                 columnLengthFiles.add(new HashMap<>());
                 currColumnSizes[i] = 0L;
+                deduplicatedColumns.add(new HashMap<>());
             }
             while (input.hasNext()) {
                 List<String> curr = input.next();
                 int index = 0;
                 for (String el : curr) {
-                    if (el != null && !markAsDeleted.contains(columnOffset + index) && (!ignoreShortStrings || el.length() > editDistanceManager.getActualEditDistanceForLength(el.length())) && allValues.get(columnOffset + index).computeIfAbsent(el.length(), l -> new HashSet<>()).add(el)) {
-                        //deduplicatedStrings.get(index).add(el.replaceAll("\n", "\0"));
+                    if (el != null && !markAsDeleted.contains(columnOffset + index)) {
                         ColumnStats stats = columnStats.get(columnOffset + index);
                         if (el.length() > 50) {
                             markAsDeleted.add(columnOffset + index);
                             stats.longestLength = 0;
-                            allValues.get(columnOffset + index).clear();
+                            deduplicatedColumns.get(index).clear();
+                            index++;
+                            continue;
+                        }
+                        SubstringableString string;
+                        if (tokenMode) {
+                            string = new TokenizedString(el.trim().toCharArray());
                         } else {
-                            numValuesSinceLastMemoryCheck++;
-                            numValuesInColumn[index]++;
-                            currColumnSizes[index] += 8 * ((2L * el.length() / 8) + 1) + 64 + editDistanceManager.getMaximumSegmentCountForLength(el.length()) * 8L;
-                            if (el.length() < stats.shortestLength) stats.shortestLength = el.length();
-                            if (el.length() > stats.longestLength) stats.longestLength = el.length();
-                            if (ignoreNumericColumns) {
-                                if (stats.canBeInteger) try {
-                                    Integer.parseInt(el);
-                                } catch (NumberFormatException e) {
-                                    stats.canBeInteger = false;
-                                }
-                                if (stats.canBeFloat) try {
-                                    Float.parseFloat(el);
-                                } catch (NumberFormatException e) {
-                                    stats.canBeFloat = false;
+                             string = new SubstringableString(el.trim());
+                        }
+                        int elLength = string.elLength();
+
+                        if ((tokenMode || (!ignoreShortStrings || elLength > similarityMeasureManager.getActualEditDistanceForLength(string.length()))) && deduplicatedColumns.get(index).computeIfAbsent(elLength, l -> new HashSet<>()).add(string)) {
+
+                            //deduplicatedStrings.get(index).add(el.replaceAll("\n", "\0"));
+
+                            if (tokenMode && elLength > 10) {
+                                markAsDeleted.add(columnOffset + index);
+                                stats.longestLength = 0;
+                                deduplicatedColumns.get(index).clear();
+                            } else {
+                                numValuesSinceLastMemoryCheck++;
+                                numValuesInColumn[index]++;
+                                int numSegments = tokenMode ? elLength : similarityMeasureManager.getMaximumSegmentCountForLength(elLength);
+                                currColumnSizes[index] += 8 * ((2L * string.getUnderlyingChars().length / 8) + 1) + 64 + numSegments * 8L;
+                                if (elLength < stats.shortestLength) stats.shortestLength = elLength;
+                                if (elLength > stats.longestLength) stats.longestLength = elLength;
+                                if (ignoreNumericColumns) {
+                                    if (stats.canBeInteger) try {
+                                        Integer.parseInt(string.toString());
+                                    } catch (NumberFormatException e) {
+                                        stats.canBeInteger = false;
+                                    }
+                                    if (ignoreNumericColumns && stats.canBeFloat) try {
+                                        Float.parseFloat(string.toString());
+                                    } catch (NumberFormatException e) {
+                                        stats.canBeFloat = false;
+                                    }
                                 }
                             }
                         }
@@ -148,8 +188,17 @@ public class Sawfish {
                     numValuesSinceLastMemoryCheck = 0;
 
                     while (ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() > maxMemoryUsage) {
+                        System.gc();
+                        if (ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() <= maxMemoryUsage) break;
                         writtenToFile = true;
                         // Identify largest buffer
+                        for (int columnIndex = 0; columnIndex < columnOffset; columnIndex++) {
+                            writeColumnArrayToDisk(needsDeduplication, allValues.get(columnIndex), columnIndex);
+                            allValues.set(columnIndex, new HashMap<>());
+                        }
+                        System.gc();
+                        if (ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() <= maxMemoryUsage) break;
+
                         int largestColumnNumber = 0;
                         int largestColumnSize = numValuesInColumn[largestColumnNumber];
                         for (int otherColumnNumber = 1; otherColumnNumber < input.numberOfColumns(); otherColumnNumber++) {
@@ -163,32 +212,32 @@ public class Sawfish {
 
                         System.out.println("Had to write column " + (columnOffset + largestColumnNumber) + " to disk");
 
-                        for (Map.Entry<Integer, HashSet<String>> lengthToValues : allValues.get(columnOffset + largestColumnNumber).entrySet()) {
-                            File tempFile = columnLengthFiles.get(columnOffset + largestColumnNumber).get(lengthToValues.getKey());
-                            if (tempFile == null) {
-                                tempFile = tempFileGenerator.getTemporaryFile();
-                                columnLengthFiles.get(columnOffset + largestColumnNumber).put(lengthToValues.getKey(), tempFile);
-                            }
-                            writeToFile(tempFile, lengthToValues.getValue(), true);
-                        }
-                        allValues.set(columnOffset + largestColumnNumber, new HashMap<>());
-
+                        writeColumnSetToDisk(needsDeduplication, deduplicatedColumns.get(largestColumnNumber), columnOffset + largestColumnNumber);
+                        deduplicatedColumns.set(largestColumnNumber, new HashMap<>());
                         System.gc();
                     }
                 }
             }
+
+            for (int columnIdx = 0; columnIdx < input.numberOfColumns(); columnIdx++) {
+                for (Map.Entry<Integer, HashSet<SubstringableString>> length2Values : deduplicatedColumns.get(columnIdx).entrySet()) {
+                    allValues.get(columnOffset + columnIdx).put(length2Values.getKey(), new ArrayList<>(length2Values.getValue()));
+                }
+            }
+
             columnOffset += input.numberOfColumns();
 
             for (long size : currColumnSizes) {
                 columnSizes.add(size);
             }
+        }
 
-            if (writtenToFile) {
-                for (int columnIndex = 0; columnIndex < columnOffset; columnIndex++) {
-                    writeColumnToDisk(needsDeduplication, columnIndex);
-                }
-                System.gc();
+        // if we need to write to disk, then write everything to disk
+        if (writtenToFile) {
+            for (int columnIndex = 0; columnIndex < columnOffset; columnIndex++) {
+                writeColumnArrayToDisk(needsDeduplication, allValues.get(columnIndex), columnIndex);
             }
+            System.gc();
         }
 
         System.out.println("All columns: " + indexToRelationColumn.size());
@@ -199,12 +248,11 @@ public class Sawfish {
 
         System.out.println("Read all input!");
 
-        // if we need to write to disk, then write everything to disk
         if (writtenToFile) {
             for (Integer column : needsDeduplication) {
                 long sum = 0L;
                 for (Map.Entry<Integer, File> length2File : columnLengthFiles.get(column).entrySet()) {
-                    HashSet<String> deduplicatedValues = new HashSet<>();
+                    HashSet<SubstringableString> deduplicatedValues = new HashSet<>();
                     Scanner reader;
                     try {
                         reader = new Scanner(length2File.getValue());
@@ -213,9 +261,13 @@ public class Sawfish {
                         throw new AlgorithmExecutionException("Temp file reading did not work");
                     }
                     while (reader.hasNextLine()) {
-                        String nextLine = reader.nextLine();
+                        SubstringableString nextLine = new SubstringableString(reader.nextLine());
+                        if (tokenMode) {
+                            nextLine = nextLine.toTokenizedString();
+                        }
                         if (deduplicatedValues.add(nextLine)) {
-                            sum += 8 * ((2L * nextLine.length() / 8) + 1) + 64 + editDistanceManager.getMaximumSegmentCountForLength(nextLine.length()) * 16L;
+                            int numSegments = tokenMode ? nextLine.elLength() : similarityMeasureManager.getMaximumSegmentCountForLength(nextLine.length());
+                            sum += 8 * ((2L * nextLine.getUnderlyingChars().length / 8) + 1) + 64 + numSegments * 8L;
                         }
                     }
                     writeToFile(length2File.getValue(), deduplicatedValues, false);
@@ -241,6 +293,7 @@ public class Sawfish {
                     columnStats.get(i).longestLength = 0;
                     allValues.get(i).clear();
                 }
+                System.gc();
             }
         }
 
@@ -249,7 +302,7 @@ public class Sawfish {
             HashSet<Integer> currentDependents = getColumnSets(numAllColumns, columnIndex);
 
             ColumnStats ownLengthStat = columnStats.get(columnIndex);
-            if (ownLengthStat.shortestLength <= editDistanceManager.getActualEditDistanceForLength(ownLengthStat.shortestLength)) {
+            if (!tokenMode && ownLengthStat.shortestLength <= similarityMeasureManager.getActualEditDistanceForLength(ownLengthStat.shortestLength)) {
                 ownLengthStat.hasShortValue = true;
             }
 
@@ -263,23 +316,22 @@ public class Sawfish {
                     if (j == columnIndex) continue;
                     ColumnStats otherLengthStat = columnStats.get(j);
                     //handle empty columns
-                    if (otherLengthStat.longestLength == 0)
-                        continue;
+                    if (otherLengthStat.longestLength == 0) continue;
 
                     // exclude simple sINDs
-                    if (ownLengthStat.longestLength <= editDistanceManager.getActualEditDistanceForLength(ownLengthStat.longestLength) && otherLengthStat.longestLength <= editDistanceManager.getActualEditDistanceForLength(otherLengthStat.longestLength)) {
+                    if (!tokenMode && ownLengthStat.longestLength <= similarityMeasureManager.getActualEditDistanceForLength(ownLengthStat.longestLength) && otherLengthStat.longestLength <= similarityMeasureManager.getActualEditDistanceForLength(otherLengthStat.longestLength)) {
                         currentDependents.remove(j);
                         possibleReferences[j]--;
                         continue;
                     }
 
-                    if (ownLengthStat.shortestLength > otherLengthStat.shortestLength + editDistanceManager.getMaximumEditDistanceForLength(otherLengthStat.shortestLength)) {
+                    if (ownLengthStat.shortestLength > otherLengthStat.shortestLength + similarityMeasureManager.getMaximumEditDistanceForLength(otherLengthStat.shortestLength)) {
                         currentDependents.remove(j);
                         possibleReferences[j]--;
                         continue;
                     }
 
-                    if (ownLengthStat.longestLength < otherLengthStat.longestLength - editDistanceManager.getMaximumEditDistanceForLength(otherLengthStat.longestLength)) {
+                    if (ownLengthStat.longestLength < otherLengthStat.longestLength - similarityMeasureManager.getMaximumEditDistanceForLength(otherLengthStat.longestLength)) {
                         currentDependents.remove(j);
                         possibleReferences[j]--;
                     }
@@ -305,8 +357,6 @@ public class Sawfish {
         }
 
         for (int i = 0; i < numAllColumns; i++) {
-            invertedIndexByColumn.add(new InvertedSegmentIndex(editDistanceManager));
-
             if (measureTime) {
                 timingStats.add(new TimingStats(numAllColumns));
             }
@@ -320,14 +370,22 @@ public class Sawfish {
                     longestLength = columnStats.get(i).longestLength;
                 }
             }
+
+            if (tokenMode) {
+                invertedIndexByColumn.add(new InvertedTokenIndex(similarityMeasureManager));
+            } else {
+                invertedIndexByColumn.add(new InvertedSegmentIndex(similarityMeasureManager));
+            }
         }
 
         System.out.println("Longest length: " + longestLength);
 
-        editDistanceBuffer = new int[longestLength][longestLength];
-        for (int i = 0; i < longestLength; i++) {
-            editDistanceBuffer[0][i] = i;
-            editDistanceBuffer[i][0] = i;
+        if (!tokenMode) {
+            Utils.editDistanceBuffer = new int[longestLength][longestLength];
+            for (int i = 0; i < longestLength; i++) {
+                Utils.editDistanceBuffer[0][i] = i;
+                Utils.editDistanceBuffer[i][0] = i;
+            }
         }
     }
 
@@ -346,11 +404,11 @@ public class Sawfish {
 
             long indexStart = System.nanoTime();
             for (Integer columnIndex : currentReferencedColumns) {
-                InvertedSegmentIndex segmentIndex = invertedIndexByColumn.get(columnIndex);
-                // set up index with all values of longestLength + errorDistance
-                for (int i = longestLength; i >= longestLength - editDistanceManager.getMaximumEditDistanceForLength(longestLength); i--) {
-                    segmentIndex.addElementsWithLength(getValuesForLength(i, columnIndex), i);
-                    segmentIndex.indexByLength(i);
+                InvertedIndex invertedIndex = invertedIndexByColumn.get(columnIndex);
+                // set up index with all values of longestLength - errorDistance
+                for (int i = longestLength; i >= longestLength - similarityMeasureManager.getMaximumEditDistanceForLength(longestLength); i--) {
+                    invertedIndex.addElementsWithLength(getValuesForLength(i, columnIndex), i);
+                    invertedIndex.indexByLength(i);
                 }
             }
 
@@ -360,19 +418,20 @@ public class Sawfish {
 
             for (int currentLength = longestLength; currentLength >= smallestLength; currentLength--) {
                 Iterator<SubstringableString> currentValues;
-                int currEditDistance = editDistanceManager.getMaximumEditDistanceForLength(currentLength);
+                int currEditDistance = similarityMeasureManager.getMaximumEditDistanceForLength(currentLength);
                 for (int referencedColumnIndex : currentReferencedColumns) {
                     HashSet<Integer> possibleDependents = possibleDependentsList.get(referencedColumnIndex);
-                    InvertedSegmentIndex currIndex = invertedIndexByColumn.get(referencedColumnIndex);
+                    InvertedIndex currIndex = invertedIndexByColumn.get(referencedColumnIndex);
                     TimingStats t = null;
                     if (timingStats != null) {
                         t = timingStats.get(referencedColumnIndex);
                     }
                     for (Integer dependentColumnIndex : possibleDependents) {
-                        if (currentLength <= editDistanceManager.getActualEditDistanceForLength(currentLength) && columnStats.get(referencedColumnIndex).hasShortValue && columnStats.get(dependentColumnIndex).hasShortValue) {
+                        if (!tokenMode && currentLength <= similarityMeasureManager.getActualEditDistanceForLength(currentLength) && columnStats.get(referencedColumnIndex).hasShortValue && columnStats.get(dependentColumnIndex).hasShortValue) {
                             // If both columns have short values, we do not need to validate any values below the editDistance
                             continue;
                         }
+
                         try {
                             currentValues = getValueIteratorForLength(currentLength, dependentColumnIndex, currentReferencedColumns);
                         } catch (IOException e) {
@@ -389,9 +448,9 @@ public class Sawfish {
 
                             boolean candidateVerified = false;
                             for (int index = 0; index <= 2 * currEditDistance; index++) {
-                                int queryLength = searchString.length() + getEditDistanceFromIndex(index);
-                                if (queryLength <= longestLength) {
-                                    candidateVerified = existsSimilarReferencedValueForLength(searchString, queryLength, currIndex, dependentColumnIndex, referencedColumnIndex, errors, t);
+                                int queryLength = currentLength + getEditDistanceFromIndex(index);
+                                if (queryLength <= longestLength && queryLength > 0) {
+                                    candidateVerified = currIndex.existsSimilarReferencedValueForLength(searchString, queryLength, dependentColumnIndex, referencedColumnIndex, errors, t);
                                     if (candidateVerified) break;
                                 }
                             }
@@ -414,16 +473,18 @@ public class Sawfish {
                 indexStart = System.nanoTime();
                 // read strings for next length and update indices
                 for (int columnIndex : currentReferencedColumns) {
-                    InvertedSegmentIndex segmentIndex = invertedIndexByColumn.get(columnIndex);
+                    InvertedIndex segmentIndex = invertedIndexByColumn.get(columnIndex);
                     if (possibleDependentsList.get(columnIndex).isEmpty() && possibleReferences[columnIndex] == 0) {
                         segmentIndex.clear();
                     } else {
                         segmentIndex.removeLengthFromIndex(currentLength + currEditDistance);
-                        segmentIndex.addElementsWithLength(getValuesForLength(currentLength - currEditDistance - 1, columnIndex), currentLength - currEditDistance - 1);
-                        if (possibleDependentsList.get(columnIndex).isEmpty()) {
-                            segmentIndex.clearIndexStructure();
-                        } else {
-                            segmentIndex.indexByLength(currentLength - currEditDistance - 1);
+                        if (!segmentIndex.containsLength(currentLength - currEditDistance - 1)) {
+                            segmentIndex.addElementsWithLength(getValuesForLength(currentLength - currEditDistance - 1, columnIndex), currentLength - currEditDistance - 1);
+                            if (possibleDependentsList.get(columnIndex).isEmpty()) {
+                                segmentIndex.clearIndexStructure();
+                            } else {
+                                segmentIndex.indexByLength(currentLength - currEditDistance - 1);
+                            }
                         }
                     }
                 }
@@ -433,62 +494,37 @@ public class Sawfish {
             }
 
             for (Integer columnIndex : currentReferencedColumns) {
-                InvertedSegmentIndex segmentIndex = invertedIndexByColumn.get(columnIndex);
+                InvertedIndex segmentIndex = invertedIndexByColumn.get(columnIndex);
                 segmentIndex.clear();
             }
         }
         return indexingTime;
     }
 
-    private boolean existsSimilarReferencedValueForLength(SubstringableString searchString, int queryLength, InvertedSegmentIndex currIndex, int dependentColumnIndex, int referencedColumnIndex, HashMap<Integer, HashMap<Integer, LinkedList<InvertedSegmentIndex.NonDirectMatch>>> errors, TimingStats t) {
-        HashSet<Integer> alreadyValidated = new HashSet<>();
-        int[] editDistanceReturn = new int[1];
-        int segmentCount = editDistanceManager.getMaximumSegmentCountForLength(queryLength);
-        ArrayList<ArrayList<SubstringableString>> substrings = Utils.generateSubstrings(searchString, segmentCount, queryLength);
-        for (int segmentIndex = 0; segmentIndex < segmentCount; segmentIndex++) {
-            InvertedSegmentIndex.SimilarMatches similarMatches;
-            similarMatches = currIndex.getPossibleSimilarStringsForSubstrings(substrings, queryLength, segmentIndex, alreadyValidated);
-            segmentIndex = similarMatches.segmentIndex;
-            if (t != null) {
-                t.indexMatches[dependentColumnIndex] += similarMatches.matches.size();
-            }
-
-            // if no possible similar strings are found, the candidate cannot be referenced and needs to be removed
-            if (!similarMatches.matches.isEmpty()) {
-                // validate each match as long as string is not already verified
-                for (InvertedSegmentIndex.Match match : similarMatches.matches) {
-                    SubstringableString matchedString = currIndex.length2Values.get(queryLength).get(match.matchedId);
-                    int segmentMatchPos = Utils.getStartPositionFromSegmentIndex(segmentIndex, matchedString.length(), segmentCount);
-                    int actualEditDistance = editDistanceManager.getActualEditDistanceForLength(Math.max(queryLength, searchString.length()));
-                    boolean candidateVerified = Utils.isWithinEditDistance(searchString, matchedString, match.startOfMatch, segmentMatchPos, similarMatches.lengthOfMatches, actualEditDistance, editDistanceBuffer, editDistanceReturn);
-
-                    if (candidateVerified) {
-                        if (showErrors && editDistanceReturn[0] > 0) {
-                            errors.computeIfAbsent(dependentColumnIndex, k -> new HashMap<>()).computeIfAbsent(referencedColumnIndex, k -> new LinkedList<>()).add(new InvertedSegmentIndex.NonDirectMatch(searchString.toString(), matchedString.toString()));
-                        }
-                        return true;
-                    }
-                }
-            }
+    private void writeColumnImpl(HashSet<Integer> needsDeduplication, Collection<SubstringableString> values, int columnIndex, int length) throws AlgorithmExecutionException {
+        File tempFile = columnLengthFiles.get(columnIndex).get(length);
+        if (tempFile == null) {
+            tempFile = tempFileGenerator.getTemporaryFile();
+            columnLengthFiles.get(columnIndex).put(length, tempFile);
+        } else {
+            needsDeduplication.add(columnIndex);
         }
-        return false;
+
+        writeToFile(tempFile, values, true);
     }
 
-    private void writeColumnToDisk(HashSet<Integer> needsDeduplication, int columnIndex) throws AlgorithmExecutionException {
-        HashMap<Integer, HashSet<String>> columnValues = allValues.get(columnIndex);
+    private void writeColumnSetToDisk(HashSet<Integer> needsDeduplication, HashMap<Integer, HashSet<SubstringableString>> columnValues, int columnIndex) throws AlgorithmExecutionException {
         System.out.println("Writing column " + columnIndex + " to disk");
-        for (Map.Entry<Integer, HashSet<String>> length2Values : columnValues.entrySet()) {
-            File tempFile = columnLengthFiles.get(columnIndex).get(length2Values.getKey());
-            if (tempFile == null) {
-                tempFile = tempFileGenerator.getTemporaryFile();
-                columnLengthFiles.get(columnIndex).put(length2Values.getKey(), tempFile);
-            } else {
-                needsDeduplication.add(columnIndex);
-            }
-
-            writeToFile(tempFile, length2Values.getValue(), true);
+        for (Map.Entry<Integer, HashSet<SubstringableString>> length2Values : columnValues.entrySet()) {
+            writeColumnImpl(needsDeduplication, length2Values.getValue(), columnIndex, length2Values.getKey());
         }
-        allValues.set(columnIndex, new HashMap<>());
+    }
+
+    private void writeColumnArrayToDisk(HashSet<Integer> needsDeduplication, HashMap<Integer, ArrayList<SubstringableString>> columnValues, int columnIndex) throws AlgorithmExecutionException {
+        System.out.println("Writing column " + columnIndex + " to disk");
+        for (Map.Entry<Integer, ArrayList<SubstringableString>> length2Values : columnValues.entrySet()) {
+            writeColumnImpl(needsDeduplication, length2Values.getValue(), columnIndex, length2Values.getKey());
+        }
     }
 
     private ArrayList<SubstringableString> getValuesForLength(int length, int columnIndex) throws AlgorithmExecutionException {
@@ -507,16 +543,8 @@ public class Sawfish {
     private Iterator<SubstringableString> getValueIteratorForLength(int length, int columnIndex, HashSet<Integer> currentReferencedColumns) throws IOException {
         if (currentReferencedColumns.contains(columnIndex)) {
             return invertedIndexByColumn.get(columnIndex).getElementsByLength(length).iterator();
-        } else if (allNewValues.get(columnIndex).get(length) != null) {
-            return allNewValues.get(columnIndex).get(length).iterator();
         } else if (allValues.get(columnIndex).get(length) != null) {
-            ArrayList<SubstringableString> result = new ArrayList<>(allValues.get(columnIndex).get(length).size());
-            for (String val : allValues.get(columnIndex).remove(length)) {
-                result.add(new SubstringableString(val));
-            }
-            allValues.get(columnIndex).put(length, new HashSet<>(1));
-            allNewValues.get(columnIndex).put(length, result);
-            return result.iterator();
+            return allValues.get(columnIndex).get(length).iterator();
         } else {
             File tempFile = columnLengthFiles.get(columnIndex).get(length);
             if (tempFile == null) {
@@ -541,11 +569,12 @@ public class Sawfish {
         return new ColumnPermutation(new ColumnIdentifier(columnId[0], columnId[1]));
     }
 
-    private void writeToFile(File file, Collection<String> values, boolean append) throws AlgorithmExecutionException {
+    private void writeToFile(File file, Collection<SubstringableString> values, boolean append) throws AlgorithmExecutionException {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(file, append));
-            for (String s : values) {
-                writer.write(s + System.lineSeparator());
+            for (SubstringableString s : values) {
+                writer.write(s.getUnderlyingChars());
+                writer.write(System.lineSeparator());
             }
             writer.close();
         } catch (IOException e) {
@@ -638,5 +667,189 @@ public class Sawfish {
             }
         }
         return curr;
+    }
+
+    private int maximumNumberOfInts(int length) {
+        int result = 9;
+        for (int i = 0; i < length - 1; i++) {
+            result *= 10;
+        }
+        return result;
+    }
+
+    private void generateDistinctCounts() throws AlgorithmExecutionException {
+        int columnOffset = 0;
+        HashSet<Integer> deletedColumns = new HashSet<>();
+        HashSet<String> allDistincts = new HashSet<>();
+        for (RelationalInputGenerator inputGenerator : inputGenerators) {
+            RelationalInput input = inputGenerator.generateNewCopy();
+            ArrayList<HashSet<String>> deduplicatedStrings = new ArrayList<>(input.numberOfColumns());
+            for (int i = 0; i < input.numberOfColumns(); i++) {
+                deduplicatedStrings.add(new HashSet<>());
+            }
+            while (input.hasNext()) {
+                List<String> curr = input.next();
+                int index = 0;
+                for (String el : curr) {
+                    if (el != null && !deletedColumns.contains(columnOffset + index) && deduplicatedStrings.get(index).add(el)) {
+                        el = el.trim();
+                        int elLength = Utils.getElementLength(el, tokenMode);
+                        if (elLength > 50) {
+                            deletedColumns.add(columnOffset + index);
+                            deduplicatedStrings.get(index).clear();
+                        }
+                    }
+                    index++;
+                }
+            }
+            columnOffset += input.numberOfColumns();
+            for (HashSet<String> s : deduplicatedStrings) {
+                allDistincts.addAll(s);
+            }
+            for (int i = 0; i < input.numberOfColumns(); i++) {
+                if (!deletedColumns.contains(i)) {
+                    System.out.println(i + " " + input.columnNames().get(i));
+                }
+            }
+        }
+        System.out.println("Distinct Count: " + allDistincts.size());
+    }
+
+    private void generateStatistics() throws AlgorithmExecutionException {
+        int columnOffset = 0;
+        ArrayList<HashMap<Integer, Long>> countsPerColumn = new ArrayList<>();
+        HashSet<Integer> deletedColumns = new HashSet<>();
+        int shortest = Integer.MAX_VALUE, longest = Integer.MIN_VALUE;
+        for (RelationalInputGenerator inputGenerator : inputGenerators) {
+            RelationalInput input = inputGenerator.generateNewCopy();
+            ArrayList<HashSet<String>> deduplicatedStrings = new ArrayList<>(input.numberOfColumns());
+            for (int i = 0; i < input.numberOfColumns(); i++) {
+                deduplicatedStrings.add(new HashSet<>());
+                countsPerColumn.add(new HashMap<>());
+            }
+            while (input.hasNext()) {
+                List<String> curr = input.next();
+                int index = 0;
+                for (String el : curr) {
+                    if (el != null && !deletedColumns.contains(columnOffset + index) && deduplicatedStrings.get(index).add(el)) {
+                        el = el.trim();
+                        int elLength = Utils.getElementLength(el, tokenMode);
+                        if (elLength > 50) {
+                            deletedColumns.add(columnOffset + index);
+                            deduplicatedStrings.get(index).clear();
+                        } else {
+                            if (elLength < shortest) {
+                                shortest = elLength;
+                            }
+                            if (elLength > longest) {
+                                longest = elLength;
+                            }
+                            countsPerColumn.get(columnOffset + index).merge(elLength, 1L, Long::sum);
+                        }
+                    }
+                    index++;
+                }
+            }
+            columnOffset += input.numberOfColumns();
+        }
+
+        System.out.print("length,");
+        for (int i = 0; i < countsPerColumn.size() - deletedColumns.size(); i++) {
+            System.out.print(i + ",");
+        }
+        System.out.println("sum");
+        for (int i = shortest; i <= longest; i++) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(i).append(",");
+            long sum = 0;
+            for (int j = 0; j < countsPerColumn.size(); j++) {
+                if (!deletedColumns.contains(j)) {
+                    HashMap<Integer, Long> curr = countsPerColumn.get(j);
+                    if (curr.containsKey(i)) {
+                        stringBuilder.append(curr.get(i)).append(",");
+                        sum += curr.get(i);
+                    } else {
+                        stringBuilder.append(",");
+                    }
+                }
+            }
+            if (sum > 0) {
+                stringBuilder.append(sum);
+                System.out.println(stringBuilder);
+            }
+        }
+        System.out.println("elements_per_column");
+        for (HashMap<Integer, Long> curr : countsPerColumn) {
+            long sum = 0;
+            for (Long val : curr.values()) {
+                sum += val;
+            }
+            System.out.println(sum);
+        }
+    }
+
+    private void generateSampleBase() throws AlgorithmExecutionException {
+        System.out.println("Generating Base Samples");
+        int columnOffset = 0;
+        HashSet<Integer> deletedColumns = new HashSet<>();
+        ArrayList<ArrayList<String>> data = new ArrayList<>();
+        for (RelationalInputGenerator inputGenerator : inputGenerators) {
+            RelationalInput input = inputGenerator.generateNewCopy();
+            for (int i = 0; i < input.numberOfColumns(); i++) {
+                data.add(new ArrayList<>());
+                data.get(columnOffset + i).add(input.relationName() + " - " + input.columnNames().get(i)); // add header
+            }
+            while (input.hasNext()) {
+                List<String> curr = input.next();
+                int index = 0;
+                for (String el : curr) {
+                    if (!deletedColumns.contains(columnOffset + index)) {
+                        ArrayList<String> currData = data.get(columnOffset + index);
+                        if (el == null) {
+                            currData.add("");
+                        } else if (el.length() > 50) {
+                            deletedColumns.add(columnOffset + index);
+                            currData.clear();
+                        } else {
+                            el = el.trim();
+                            currData.add(el);
+                        }
+                    }
+                    index++;
+                }
+            }
+            columnOffset += input.numberOfColumns();
+            System.out.println("Read " + input.relationName());
+        }
+        try {
+            File file = new File("src/test/data/base_samples/" + inputGenerators.get(0).generateNewCopy().relationName());
+            FileWriter writer = new FileWriter(file);
+            int index = 0;
+            while (true) {
+                int finishedColumns = deletedColumns.size();
+                StringJoiner sj = new StringJoiner("\";\"", "\"", "\"");
+                for (int i = 0; i < data.size(); i++) {
+                    if (!deletedColumns.contains(i)) {
+                        ArrayList<String> column = data.get(i);
+                        if (index < column.size()) {
+                            sj.add(column.get(index));
+                        } else {
+                            sj.add("");
+                            finishedColumns++;
+                        }
+                    }
+                }
+                index++;
+                if (finishedColumns != data.size()) {
+                    writer.write(sj + System.lineSeparator());
+                } else {
+                    break;
+                }
+            }
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new AlgorithmExecutionException("Temp file writing exception", e);
+        }
     }
 }
