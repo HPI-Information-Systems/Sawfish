@@ -31,11 +31,10 @@ public class SawfishInterface extends Sawfish
         similarityThreshold.setDefaultValues(defaultStringParamerter);
         conf.add(similarityThreshold);
         ConfigurationRequirementBoolean ignoreShortStrings = new ConfigurationRequirementBoolean(Identifier.ignoreShortStrings.name());
-        Boolean[] ignoreShortStringsDefault = {true};
-        ignoreShortStrings.setDefaultValues(ignoreShortStringsDefault);
+        Boolean[] defaultBooleanParameter = {false};
+        ignoreShortStrings.setDefaultValues(defaultBooleanParameter);
         conf.add(ignoreShortStrings);
         ConfigurationRequirementBoolean showErrors = new ConfigurationRequirementBoolean(Identifier.showErrors.name());
-        Boolean[] defaultBooleanParameter = {false};
         showErrors.setDefaultValues(defaultBooleanParameter);
         conf.add(showErrors);
         ConfigurationRequirementBoolean measureTime = new ConfigurationRequirementBoolean(Identifier.measureTime.name());
