@@ -24,6 +24,7 @@ public class InvertedSegmentIndex extends InvertedIndex {
             segmentList.add(new HashMap<>(values.size() + 1, 1f));
         }
 
+        // segment every string in equally sized parts
         int[] startPositions = Utils.getStartPositions(length, editDistance + 1);
         for (int i = 0; i < values.size(); i++) {
             for (int j = 0; j < editDistance + 1; j++) {
@@ -60,6 +61,7 @@ public class InvertedSegmentIndex extends InvertedIndex {
                     boolean candidateVerified = Utils.isWithinEditDistance(searchString, matchedString, match.startOfMatch, segmentMatchPos, similarMatches.lengthOfMatches, actualEditDistance, Utils.editDistanceBuffer, editDistanceReturn);
 
                     if (candidateVerified) {
+                        // in case we want to log similar matches store them in errors map
                         if (errors != null && editDistanceReturn[0] > 0) {
                             errors.computeIfAbsent(dependentColumnIndex, k -> new HashMap<>()).computeIfAbsent(referencedColumnIndex, k -> new LinkedList<>()).add(new InvertedSegmentIndex.NonDirectMatch(searchString.toString(), matchedString.toString()));
                         }
@@ -69,25 +71,6 @@ public class InvertedSegmentIndex extends InvertedIndex {
             }
         }
         return false;
-    }
-
-    public ArrayList<SubstringableString> getPossibleSimilarStrings(SubstringableString queryString) {
-        int maxOuterEditDistance = similarityMeasureManager.getMaximumEditDistanceForLength(queryString.length());
-        ArrayList<SubstringableString> result = new ArrayList<>();
-        // for each possible edit distance
-        for (int i = -maxOuterEditDistance; i <= maxOuterEditDistance; i++) {
-            int queryLength = queryString.length() + i;
-            int innerEditDistance = similarityMeasureManager.getMaximumEditDistanceForLength(queryLength);
-            ArrayList<ArrayList<SubstringableString>> substrings = Utils.generateSubstrings(queryString, innerEditDistance + 1, queryLength);
-
-            HashSet<Integer> alreadyKnown = new HashSet<>();
-            for (int segmentIndex = 0; segmentIndex < innerEditDistance + 1; segmentIndex++) {
-                for (Match m : getPossibleSimilarStringsForSubstrings(substrings, queryString.length() + i, segmentIndex, alreadyKnown).matches) {
-                    result.add(length2Values.get(queryString.length() + i).get(m.matchedId));
-                }
-            }
-        }
-        return result;
     }
 
     public SimilarMatches getPossibleSimilarStringsForSubstrings(ArrayList<ArrayList<SubstringableString>> substrings, int queryLength, int segmentIndex, HashSet<Integer> alreadyValidatedSet) {
@@ -101,7 +84,9 @@ public class InvertedSegmentIndex extends InvertedIndex {
                 // for each generated substring for that segment position, find a matching segment and save match
                 for (SubstringableString substring : substrings.get(segmentIndex)) {
                     IntArrayList matches = segment2Indices.get(substring);
+                    // if no matches are found, directly return
                     if (matches != null) {
+                        // add each match to result set and alreadyValidated set to prevent re-evaluation of referenced string
                         for (int i : matches) {
                             if (!alreadyValidatedSet.contains(i)) {
                                 result.add(new Match(i, substring.getStartPosition()));

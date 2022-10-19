@@ -11,10 +11,6 @@ public class SimilarityMeasureManager {
     private int[][] tokenThresholds;
     private float similarityThreshold;
 
-    public SimilarityMeasureManager(int absoluteEditDistance) throws AlgorithmConfigurationException {
-        this(absoluteEditDistance, 0f, false, false);
-    }
-
     public SimilarityMeasureManager(int absoluteEditDistance, float similarityThreshold, boolean hybridMode, boolean tokenMode) throws AlgorithmConfigurationException {
         if (similarityThreshold == 0 && !hybridMode && !tokenMode) {
             this.isNormalizedMode = false;

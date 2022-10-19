@@ -40,16 +40,6 @@ public class Utils {
 
     public static Pattern delimiterPattern = Pattern.compile("\\s+");
 
-    public static int getElementLength(String string, boolean tokenMode) {
-        if (tokenMode) {
-            HashSet<String> set = new HashSet<>(2);
-            set.addAll(Arrays.asList(delimiterPattern.split(string)));
-            return set.size();
-        } else {
-            return string.length();
-        }
-    }
-
     static public int[] getStartPositions(int length, int segmentCount) {
         int[] result = new int[segmentCount + 1];
         int longSegments = length % segmentCount;
@@ -130,52 +120,6 @@ public class Utils {
         }
         return result;
     }
-
-    static public ArrayList<ArrayList<SubstringableString>> generateSubstrings(SubstringableString input, int segmentCount, int queriedLength) {
-        ArrayList<ArrayList<SubstringableString>> result = new ArrayList<>(segmentCount);
-        if (segmentCount > queriedLength) {
-            ArrayList<SubstringableString> allCharacters = new ArrayList<>(input.length());
-            for (int i = 0; i < input.length(); i++) {
-                allCharacters.add(input.substring(i, i + 1));
-            }
-            for (int i = 0; i < segmentCount - queriedLength; i++) {
-                result.add(new ArrayList<>(0));
-            }
-            for (int i = segmentCount - queriedLength; i < segmentCount; i++) {
-                result.add(allCharacters);
-            }
-        } else {
-            int lengthDifference = input.length() - queriedLength;
-
-            int startPosition = 1;
-            int segmentLength = queriedLength / segmentCount;
-            int shortSegments = segmentCount - (queriedLength % segmentCount);
-            for (int i = 1; i <= segmentCount; i++) {
-                ArrayList<SubstringableString> curr = new ArrayList<>();
-
-                int minL = startPosition - i + 1;
-                int minR = startPosition + lengthDifference - (segmentCount - 1 + 1 - i);
-                int minPos = Math.max(1, Math.max(minL, minR));
-
-                int maxL = startPosition + i - 1;
-                int maxR = startPosition + lengthDifference + (segmentCount - 1 + 1 - i);
-                int maxPos = Math.min(input.length() - segmentLength + 1, Math.min(maxL, maxR));
-
-                for (int j = minPos; j <= maxPos; j++) {
-                    curr.add(input.substring(j - 1, j - 1 + segmentLength));
-                }
-
-                startPosition += segmentLength;
-
-                if (i == shortSegments)
-                    segmentLength++;
-
-                result.add(curr);
-            }
-        }
-        return result;
-    }
-
 
     // Inspired by the EditDistanceClusterer (https://github.com/lispc/EditDistanceClusterer) - Copyright (c) [2015] [Zhuo Zhang]
     static public boolean isWithinEditDistance(SubstringableString src, SubstringableString dst, int srcMatchPos, int dstMatchPos, int len, int threshold,
