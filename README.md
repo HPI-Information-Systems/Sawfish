@@ -35,6 +35,7 @@ To build the image, run `docker build -t sawfish .`.
 Now, start a container by running `docker run -d -p 8080:8080 -p 8081:8081 sawfish`.
 Then, you can access Metanome with SAWFISH installed in your browser at `localhost:8080`.
 To try out more datasets, you can mount a directory containing the appropriate csv files to the container like this `docker run -d -p 8080:8080 -p 8081:8081 -v /path/to/your/data:/app/metanome/backend/WEB-INF/classes/inputData/extern sawfish`.
+Please note that you might need to change the dataset configuration in Metanome after mounting external csv datasets, since Metanome assumes a certain format.
 
 ## Repeatibility
 The datasets that were used in the publication are available [here](https://hpi.de/naumann/projects/repeatability/data-profiling/metanome-ind-algorithms.html).
