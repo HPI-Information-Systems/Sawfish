@@ -28,9 +28,6 @@ Other configuration options are listed below:
 - `ignoreNumericColumns`: ignore columns that only contain numeric values
 - `hybridMode`: turns on the hybrid mode of the normalized edit distance computation in SAWFISH
 
-## Repeatibility
-The datasets that were used in the publication are available [here](https://hpi.de/naumann/projects/repeatability/data-profiling/metanome-ind-algorithms.html).
-
 ## Docker Usage
 
 To easily try out the SAWFISH, we provide a dockerfile that contains Metanome and builds SAWFISH.
@@ -38,3 +35,9 @@ To build the image, run `docker build -t sawfish .`.
 Now, start a container by running `docker run -d -p 8080:8080 -p 8081:8081 sawfish`.
 Then, you can access Metanome with SAWFISH installed in your browser at `localhost:8080`.
 To try out more datasets, you can mount a directory containing the appropriate csv files to the container like this `docker run -d -p 8080:8080 -p 8081:8081 -v /path/to/your/data:/app/metanome/backend/WEB-INF/classes/inputData/extern sawfish`.
+
+## Repeatibility
+The datasets that were used in the publication are available [here](https://hpi.de/naumann/projects/repeatability/data-profiling/metanome-ind-algorithms.html).
+
+## Joinability Case Study
+We have manually annotated all, true sINDs that were discovered by SAWFISH on all relational tables of [this sample](http://data.dws.informatik.uni-mannheim.de/webtables/2015-07/sample.gz) of the 2015 Web Table Corpus. Our annotations are stored in the `joinability_case_study_annotations.csv` with the following schema `[Dependent Table,Dependent Column Index,Referenced Table,Referenced Column Index,Classification]`. The column indices are 0-indexed. The classification distinguishes sINDs into the following classes: `[Meaningful, Coincidental, Erroneous]`.

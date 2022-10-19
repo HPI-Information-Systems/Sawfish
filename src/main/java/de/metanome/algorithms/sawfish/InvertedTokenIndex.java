@@ -31,11 +31,14 @@ public class InvertedTokenIndex extends InvertedIndex {
 
     @Override
     public boolean existsSimilarReferencedValueForLength(SubstringableString searchString, int queryLength, int dependentColumnIndex, int referencedColumnIndex, HashMap<Integer, HashMap<Integer, LinkedList<NonDirectMatch>>> errors, TimingStats t) {
+        // HashMap guarantees 0 initialization for new keys
         Int2ByteOpenHashMap id2Count = new Int2ByteOpenHashMap();
         SubstringableString[] tokens = searchString.getTokens();
         int threshold = similarityMeasureManager.getTokenThreshold(tokens.length, queryLength);
         if (threshold > queryLength) return false;
 
+        // ScanCount implementation
+        // for each string, count tokens that are present in index
         for (SubstringableString s : tokens) {
             ArrayList<HashMap<SubstringableString, IntArrayList>> index = map.get(queryLength);
             if (index != null) {

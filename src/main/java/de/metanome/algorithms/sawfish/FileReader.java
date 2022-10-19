@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.Iterator;
 
+// Custom File Reader for custom SubstringableString
+// Only reads self-written files and uses assumptions (e.g. string length <= 50) to speedup process
 public class FileReader implements Iterator<SubstringableString> {
     private final BufferedReader reader;
     private final char[] buffer = new char[1];
@@ -52,9 +54,5 @@ public class FileReader implements Iterator<SubstringableString> {
         } else {
             return getNextString();
         }
-    }
-
-    public boolean hasMoreValues() {
-        return false;
     }
 }

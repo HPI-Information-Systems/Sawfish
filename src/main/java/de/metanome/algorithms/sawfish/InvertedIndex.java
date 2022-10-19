@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+// super class of the InvertedIndex for both token-based and edit-based similarity computation
 public abstract class InvertedIndex {
 
     static class SimilarMatches {
