@@ -12,14 +12,9 @@ First, clone the repository on your machine by running:
 ---
 
 ## 2. Execution
+We offerer different ways to execute Sawfish, but each one of them requires docker and docker compose. If it is not yet installed on your machine, please follow these instructions: <https://docs.docker.com/engine/install/>
 
-We provide docker containers that run the sawfish script – therefore one system requirement is the use of docker and docker-compose. If you wish to manually install all the requirements and adjust settings, please follow the Manual Installation instructions below. <span style="color:red">Otherwise, continue reading</span>.
-
-### Docker Usage
-
-If you chose to use docker for reproduction, a system requirement is docker and docker compose. If it is not yet installed on your machine, please follow these instructions: <https://docs.docker.com/engine/install/>
-
-We offer multiple ways to execute Sawfish with docker. Each method differentiates in the ability to customize the output.
+Each method differentiates in the ability to customize the output.
 
 <details>
 <summary>1. Master Script</summary>
@@ -51,4 +46,27 @@ It is not supported to generate the
 <span style="color:red"> Insert Video here <span>
 </details>
 
-### Manual Installation
+### Configurations
+
+#### Changing parameters
+
+The project contains default values for most configuration options. To run the algorithm, only an input file and the edit distance threshold are required.
+
+Other configuration options are listed below:
+
+- `editDistanceThreshold`: absolute edit distance threshold
+- `similarityThreshold`: normalized edit distance threshold/Jaccard similarity threshold
+- `tokenMode`: turn on the token mode, which computes the Jaccard similarity instead of edit distance
+- `ignoreShortString`: ignore strings that are shorter than the edit distance threshold, only required for comparison to PassJoin
+- `memoryCheckFrequency`: number of values until a memory check occurs
+- `maxMemoryUsagePercentage`: percentage of available memory SAWFISH should use
+- `writeDataErrors`: creates an output file with the indirect matches that were found during validation
+- `measureTime`: creates an output file with fine-grained time stats
+- `ignoreNumericColumns`: ignore columns that only contain numeric values
+- `hybridMode`: turns on the hybrid mode of the normalized edit distance computation in SAWFISH
+
+#### Changing the input data
+To change the input data, use the Metanome CLI or Metanome UI. add `-v path/to/your/data:/app/metanome/backend/WEB-INF/classes/inputData/extern` to your docker run command. E.g.:
+`docker run -d -p 8080:8080 -p 8081:8081 -v /path/to/your/data:/app/metanome/backend/WEB-INF/classes/inputData/extern sawfish`
+
+Remember to replace `path/to/your/data` with your custom path. 
