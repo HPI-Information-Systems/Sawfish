@@ -1,0 +1,5 @@
+services:
+  sawfish-master:
+  image: sawfish-master:latest
+  container_name: sawfish-master
+  

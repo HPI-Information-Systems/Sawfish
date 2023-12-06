@@ -1,0 +1,600 @@
+DS CENSUS - LEN 0 - run 0 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:01.112 (1112 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 1 - run 0 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:02.022 (2022 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 2 - run 0 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:02.556 (2556 ms).
+(metanome-cli) INFO     Number of results: 42
+DS CENSUS - LEN 3 - run 0 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:03.126 (3126 ms).
+(metanome-cli) INFO     Number of results: 42
+DS CENSUS - LEN 4 - run 0 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:03.704 (3704 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 5 - run 0 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:04.112 (4112 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 6 - run 0 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:05.005 (5005 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 7 - run 0 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:05.606 (5606 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 8 - run 0 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:06.400 (6400 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 9 - run 0 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:06.709 (6709 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 0 - run 1 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:01.169 (1169 ms).
+(metanome-cli) INFO     Number of results: 40
+DS CENSUS - LEN 1 - run 1 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:01.985 (1985 ms).
+(metanome-cli) INFO     Number of results: 40
+DS CENSUS - LEN 2 - run 1 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:02.534 (2534 ms).
+(metanome-cli) INFO     Number of results: 42
+DS CENSUS - LEN 3 - run 1 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:03.185 (3185 ms).
+(metanome-cli) INFO     Number of results: 42
+DS CENSUS - LEN 4 - run 1 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:03.611 (3611 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 5 - run 1 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:04.405 (4405 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 6 - run 1 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:04.957 (4957 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 7 - run 1 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:05.556 (5556 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 8 - run 1 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:06.096 (6096 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 9 - run 1 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:06.697 (6697 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 0 - run 2 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:01.172 (1172 ms).
+(metanome-cli) INFO     Number of results: 38
+DS CENSUS - LEN 1 - run 2 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:01.996 (1996 ms).
+(metanome-cli) INFO     Number of results: 40
+DS CENSUS - LEN 2 - run 2 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:02.632 (2632 ms).
+(metanome-cli) INFO     Number of results: 40
+DS CENSUS - LEN 3 - run 2 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:03.103 (3103 ms).
+(metanome-cli) INFO     Number of results: 40
+DS CENSUS - LEN 4 - run 2 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:03.793 (3793 ms).
+(metanome-cli) INFO     Number of results: 44
+DS CENSUS - LEN 5 - run 2 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:04.570 (4570 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 6 - run 2 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:04.718 (4718 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 7 - run 2 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:05.258 (5258 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 8 - run 2 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:06.077 (6077 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 9 - run 2 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:06.618 (6618 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 0 - run 3 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:01.157 (1157 ms).
+(metanome-cli) INFO     Number of results: 39
+DS CENSUS - LEN 1 - run 3 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:02.042 (2042 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 2 - run 3 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:02.590 (2590 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 3 - run 3 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:03.129 (3129 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 4 - run 3 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:03.781 (3781 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 5 - run 3 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:04.520 (4520 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 6 - run 3 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:04.943 (4943 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 7 - run 3 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:05.524 (5524 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 8 - run 3 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:06.026 (6026 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 9 - run 3 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:06.715 (6715 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 0 - run 4 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:01.161 (1161 ms).
+(metanome-cli) INFO     Number of results: 39
+DS CENSUS - LEN 1 - run 4 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:02.064 (2064 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 2 - run 4 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:02.557 (2557 ms).
+(metanome-cli) INFO     Number of results: 42
+DS CENSUS - LEN 3 - run 4 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:03.207 (3207 ms).
+(metanome-cli) INFO     Number of results: 44
+DS CENSUS - LEN 4 - run 4 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:03.816 (3816 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 5 - run 4 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:04.144 (4144 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 6 - run 4 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:04.706 (4706 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 7 - run 4 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:05.709 (5709 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 8 - run 4 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:06.019 (6019 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 9 - run 4 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:06.611 (6611 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 0 - run 5 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:01.177 (1177 ms).
+(metanome-cli) INFO     Number of results: 38
+DS CENSUS - LEN 1 - run 5 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:01.969 (1969 ms).
+(metanome-cli) INFO     Number of results: 40
+DS CENSUS - LEN 2 - run 5 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:02.585 (2585 ms).
+(metanome-cli) INFO     Number of results: 40
+DS CENSUS - LEN 3 - run 5 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:03.065 (3065 ms).
+(metanome-cli) INFO     Number of results: 44
+DS CENSUS - LEN 4 - run 5 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:03.656 (3656 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 5 - run 5 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:04.498 (4498 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 6 - run 5 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:04.914 (4914 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 7 - run 5 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:05.489 (5489 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 8 - run 5 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:06.309 (6309 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 9 - run 5 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:06.745 (6745 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 0 - run 6 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:01.149 (1149 ms).
+(metanome-cli) INFO     Number of results: 40
+DS CENSUS - LEN 1 - run 6 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:01.984 (1984 ms).
+(metanome-cli) INFO     Number of results: 40
+DS CENSUS - LEN 2 - run 6 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:02.508 (2508 ms).
+(metanome-cli) INFO     Number of results: 40
+DS CENSUS - LEN 3 - run 6 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:03.071 (3071 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 4 - run 6 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:03.851 (3851 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 5 - run 6 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:04.452 (4452 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 6 - run 6 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:05.012 (5012 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 7 - run 6 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:05.596 (5596 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 8 - run 6 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:06.074 (6074 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 9 - run 6 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:06.456 (6456 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 0 - run 7 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:01.197 (1197 ms).
+(metanome-cli) INFO     Number of results: 40
+DS CENSUS - LEN 1 - run 7 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:01.966 (1966 ms).
+(metanome-cli) INFO     Number of results: 40
+DS CENSUS - LEN 2 - run 7 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:02.543 (2543 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 3 - run 7 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:02.955 (2955 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 4 - run 7 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:03.819 (3819 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 5 - run 7 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:04.091 (4091 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 6 - run 7 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:04.692 (4692 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 7 - run 7 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:05.316 (5316 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 8 - run 7 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:06.867 (6867 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 9 - run 7 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:06.551 (6551 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 0 - run 8 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:01.106 (1106 ms).
+(metanome-cli) INFO     Number of results: 38
+DS CENSUS - LEN 1 - run 8 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:01.983 (1983 ms).
+(metanome-cli) INFO     Number of results: 40
+DS CENSUS - LEN 2 - run 8 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:02.512 (2512 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 3 - run 8 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:03.176 (3176 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 4 - run 8 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:03.830 (3830 ms).
+(metanome-cli) INFO     Number of results: 42
+DS CENSUS - LEN 5 - run 8 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:04.513 (4513 ms).
+(metanome-cli) INFO     Number of results: 42
+DS CENSUS - LEN 6 - run 8 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:05.119 (5119 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 7 - run 8 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:05.500 (5500 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 8 - run 8 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:06.125 (6125 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 9 - run 8 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:06.636 (6636 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 0 - run 9 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:01.187 (1187 ms).
+(metanome-cli) INFO     Number of results: 37
+DS CENSUS - LEN 1 - run 9 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:01.944 (1944 ms).
+(metanome-cli) INFO     Number of results: 40
+DS CENSUS - LEN 2 - run 9 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:02.428 (2428 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 3 - run 9 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:03.200 (3200 ms).
+(metanome-cli) INFO     Number of results: 44
+DS CENSUS - LEN 4 - run 9 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:03.738 (3738 ms).
+(metanome-cli) INFO     Number of results: 44
+DS CENSUS - LEN 5 - run 9 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:04.426 (4426 ms).
+(metanome-cli) INFO     Number of results: 44
+DS CENSUS - LEN 6 - run 9 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:05.017 (5017 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 7 - run 9 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:05.426 (5426 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 8 - run 9 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:06.228 (6228 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 9 - run 9 - token True
+(metanome-cli) INFO     Elapsed time: 0:00:06.583 (6583 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 0 - run 0 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:00.668 (668 ms).
+(metanome-cli) INFO     Number of results: 34
+DS CENSUS - LEN 1 - run 0 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:00.930 (930 ms).
+(metanome-cli) INFO     Number of results: 35
+DS CENSUS - LEN 2 - run 0 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.315 (1315 ms).
+(metanome-cli) INFO     Number of results: 44
+DS CENSUS - LEN 3 - run 0 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.637 (1637 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 4 - run 0 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.967 (1967 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 5 - run 0 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.286 (2286 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 6 - run 0 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.526 (2526 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 7 - run 0 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.752 (2752 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 8 - run 0 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:03.002 (3002 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 9 - run 0 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:03.288 (3288 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 0 - run 1 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:00.644 (644 ms).
+(metanome-cli) INFO     Number of results: 35
+DS CENSUS - LEN 1 - run 1 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:00.935 (935 ms).
+(metanome-cli) INFO     Number of results: 35
+DS CENSUS - LEN 2 - run 1 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.306 (1306 ms).
+(metanome-cli) INFO     Number of results: 35
+DS CENSUS - LEN 3 - run 1 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.609 (1609 ms).
+(metanome-cli) INFO     Number of results: 37
+DS CENSUS - LEN 4 - run 1 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.981 (1981 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 5 - run 1 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.283 (2283 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 6 - run 1 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.532 (2532 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 7 - run 1 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.735 (2735 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 8 - run 1 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:03.019 (3019 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 9 - run 1 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:03.230 (3230 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 0 - run 2 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:00.690 (690 ms).
+(metanome-cli) INFO     Number of results: 32
+DS CENSUS - LEN 1 - run 2 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.045 (1045 ms).
+(metanome-cli) INFO     Number of results: 36
+DS CENSUS - LEN 2 - run 2 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.385 (1385 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 3 - run 2 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.726 (1726 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 4 - run 2 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.998 (1998 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 5 - run 2 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.310 (2310 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 6 - run 2 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.506 (2506 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 7 - run 2 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.665 (2665 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 8 - run 2 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.973 (2973 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 9 - run 2 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:03.249 (3249 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 0 - run 3 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:00.631 (631 ms).
+(metanome-cli) INFO     Number of results: 35
+DS CENSUS - LEN 1 - run 3 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:00.946 (946 ms).
+(metanome-cli) INFO     Number of results: 39
+DS CENSUS - LEN 2 - run 3 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.313 (1313 ms).
+(metanome-cli) INFO     Number of results: 40
+DS CENSUS - LEN 3 - run 3 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.711 (1711 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 4 - run 3 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.967 (1967 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 5 - run 3 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.151 (2151 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 6 - run 3 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.413 (2413 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 7 - run 3 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.679 (2679 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 8 - run 3 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.961 (2961 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 9 - run 3 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:03.272 (3272 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 0 - run 4 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:00.651 (651 ms).
+(metanome-cli) INFO     Number of results: 36
+DS CENSUS - LEN 1 - run 4 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:00.982 (982 ms).
+(metanome-cli) INFO     Number of results: 40
+DS CENSUS - LEN 2 - run 4 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.297 (1297 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 3 - run 4 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.729 (1729 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 4 - run 4 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.966 (1966 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 5 - run 4 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.304 (2304 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 6 - run 4 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.534 (2534 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 7 - run 4 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.803 (2803 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 8 - run 4 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:03.008 (3008 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 9 - run 4 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:03.345 (3345 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 0 - run 5 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:00.658 (658 ms).
+(metanome-cli) INFO     Number of results: 35
+DS CENSUS - LEN 1 - run 5 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:00.990 (990 ms).
+(metanome-cli) INFO     Number of results: 42
+DS CENSUS - LEN 2 - run 5 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.309 (1309 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 3 - run 5 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.637 (1637 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 4 - run 5 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.961 (1961 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 5 - run 5 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.195 (2195 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 6 - run 5 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.414 (2414 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 7 - run 5 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.840 (2840 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 8 - run 5 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:03.042 (3042 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 9 - run 5 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:03.246 (3246 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 0 - run 6 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:00.651 (651 ms).
+(metanome-cli) INFO     Number of results: 35
+DS CENSUS - LEN 1 - run 6 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.026 (1026 ms).
+(metanome-cli) INFO     Number of results: 35
+DS CENSUS - LEN 2 - run 6 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.420 (1420 ms).
+(metanome-cli) INFO     Number of results: 37
+DS CENSUS - LEN 3 - run 6 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.717 (1717 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 4 - run 6 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.973 (1973 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 5 - run 6 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.258 (2258 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 6 - run 6 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.464 (2464 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 7 - run 6 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.748 (2748 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 8 - run 6 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:03.017 (3017 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 9 - run 6 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:03.251 (3251 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 0 - run 7 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:00.666 (666 ms).
+(metanome-cli) INFO     Number of results: 33
+DS CENSUS - LEN 1 - run 7 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:00.953 (953 ms).
+(metanome-cli) INFO     Number of results: 35
+DS CENSUS - LEN 2 - run 7 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.320 (1320 ms).
+(metanome-cli) INFO     Number of results: 37
+DS CENSUS - LEN 3 - run 7 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.607 (1607 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 4 - run 7 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.964 (1964 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 5 - run 7 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.200 (2200 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 6 - run 7 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.436 (2436 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 7 - run 7 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.675 (2675 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 8 - run 7 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:03.058 (3058 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 9 - run 7 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:03.234 (3234 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 0 - run 8 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:00.717 (717 ms).
+(metanome-cli) INFO     Number of results: 33
+DS CENSUS - LEN 1 - run 8 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.007 (1007 ms).
+(metanome-cli) INFO     Number of results: 39
+DS CENSUS - LEN 2 - run 8 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.400 (1400 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 3 - run 8 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.693 (1693 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 4 - run 8 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.982 (1982 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 5 - run 8 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.241 (2241 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 6 - run 8 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.475 (2475 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 7 - run 8 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.793 (2793 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 8 - run 8 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:03.020 (3020 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 9 - run 8 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:03.144 (3144 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 0 - run 9 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:00.633 (633 ms).
+(metanome-cli) INFO     Number of results: 34
+DS CENSUS - LEN 1 - run 9 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:00.982 (982 ms).
+(metanome-cli) INFO     Number of results: 35
+DS CENSUS - LEN 2 - run 9 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.297 (1297 ms).
+(metanome-cli) INFO     Number of results: 35
+DS CENSUS - LEN 3 - run 9 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.612 (1612 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 4 - run 9 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:01.958 (1958 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 5 - run 9 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.196 (2196 ms).
+(metanome-cli) INFO     Number of results: 41
+DS CENSUS - LEN 6 - run 9 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.529 (2529 ms).
+(metanome-cli) INFO     Number of results: 45
+DS CENSUS - LEN 7 - run 9 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.751 (2751 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 8 - run 9 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:02.982 (2982 ms).
+(metanome-cli) INFO     Number of results: 46
+DS CENSUS - LEN 9 - run 9 - token False
+(metanome-cli) INFO     Elapsed time: 0:00:03.327 (3327 ms).
+(metanome-cli) INFO     Number of results: 46

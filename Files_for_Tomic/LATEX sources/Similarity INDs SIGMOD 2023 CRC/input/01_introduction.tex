@@ -1,0 +1,135 @@
+\section{Inclusion Dependency}
+\label{section:introduction}
+
+Data profiling is the process of extracting metadata from datasets.
+Data dependencies are an important type of metadata and, thus, have a crucial role in data profiling.
+There are different forms of data dependencies, e.g., functional dependencies (FDs) and inclusion dependencies (INDs).
+In particular, INDs express that the tuples of one column-combination are contained in the tuples of another column-combination. We call an IND unary, if it holds between two individual columns.
+%However, INDs require that \emph{all} tuples are exactly \emph{equal} in the other column-combination.
+%Nevertheless, the ever-increasing volume of data also leads to more \enquote{dirty} data~\cite{marsh2005dirty}.
+%
+%There are multiple use cases for INDs.
+%First, they can help data practioners to understand and structure unknown data~\cite{miller2001clio}.
+%Since INDs show the inclusion of one column-combination in another column-combination, they provide foreign key candidates.
+%Second, INDs can be used to assist the schema design of a new database~\cite{levene2000INDNF}.
+%Third, they are used to discovering join partners that enrich the original database entry~\cite{zhang2010fkdiscovery}.
+%Fourth, optimizers can utilize INDs to improve query execution~\cite{gryz1998query}.
+%Especially the first three use cases would benefit from a generalization to deal with dirty data.
+%
+INDs help data practitioners to understand and structure unknown data, in particular, in discovering foreign key candidates and joinable partners~\cite{miller2001clio}.
+Moreover, INDs have assisted schema design in~\cite{levene2000INDNF} and can improve query execution~\cite{gryz1998query}.
+%Also, INDs have been used to assist schema design~\cite{levene2000INDNF}, and improve query execution~\cite{gryz1998query}.
+
+%Some data profiling research in recent years has introduced relaxed dependencies that deal with erroneous data~\cite{caruccio2016relaxed}.
+Traditional IND discovery assumes clean data: \emph{all} tuples of the dependent column-combination must be exactly \emph{equal} in the referenced column-combination.
+However, the ever-increasing volume of data also leads to more ``dirty'' data~\cite{marsh2005dirty}.
+Thus, relaxed dependencies have been introduced to deal with erroneous data~\cite{caruccio2016relaxed}.
+
+One example of relaxed dependencies is matching dependencies (MDs), which generalize the concept of functional dependencies (FDs)~\cite{MDDiscovery}.
+%Traditional FDs require that the right-hand side values must be equal for all equal left-hand side values.
+%By contrast, MDs use a similarity measure instead of the strict equality constraint.
+%This means that an MD holds if for all \emph{similar} left-hand side values, all right-hand side values are also \emph{similar}.
+For a traditional FD, the tuples on the dependent side must be equal for all equal tuples on the determinant side.
+In contrast, MDs use similarity measures instead of the strict equality constraint.
+In other words, an MD holds if, for all \emph{similar} tuples on the determinant side, all tuples on the dependent side are also \emph{similar}.
+MDs allow data practitioners to address typical use cases of FDs, such as schema normalization, even in the presence of dirty data.
+Moreover, MDs can also be used for duplicate detection~\cite{MDDiscovery}.
+A feature of MDs is that they support arbitrary similarity measures and a configurable similarity threshold to balance the error tolerance and over generalization.
+
+There is no corresponding notion yet for INDs to allow for similar values.
+Thus, we introduce similarity inclusion dependencies (sINDs).
+In contrast to traditional INDs, sINDs use a similarity measure to define inclusion.
+An sIND holds if, for all dependent values, there exists a referenced value that is at least \emph{similar}. Like MDs, sINDs support arbitrary similarity measures and configurable similarity thresholds. For this work, we consider representatives of both edit-based and token-based similarity measures: the edit distance and the Jaccard similarity.
+%Therefore, sINDs can handle dirty data.
+
+sINDs are a natural way to handle dirty data.
+Besides traditional IND use cases, sINDs can also identify sources of possibly erroneous data in data lakes.
+If a candidate IND does not hold, but its respective sIND holds, the data can be analyzed and used to identify erroneous relations.
+Either only one of the relations contains errors, so we can use the other relation to fix these, or both relations contain errors, and the data needs to be cleaned more thoroughly.
+
+To illustrate the usefulness of sINDs, we present an example in Table~\ref{table:example}.
+The tables are for a fictitious soccer tournament.
+While one table shows the results after all teams played against each other, the other table presents an aggregation of the participation forms of all goalkeepers in the tournament.
+We would assume that the values of the \emph{club} column of Table~\ref{table:example:goalkeeper} are contained in the values of the \emph{name} column of Table~\ref{table:example:results}.
+However, multiple goalkeepers made minor spelling mistakes in their club name.
+Despite these mistakes, we want to discover the dependency.
+On the one hand, we are interested in joining these columns to know which goalkeeper played for the most successful team.
+On the other hand, we could perform a data cleaning task, because all mistakes are only in the \emph{club} column of Table~\ref{table:example:goalkeeper}.
+Thus, there is a matching counterpart in the other column to automatically correct the errors.
+
+\begin{table}[ht]
+    \caption{Example relations of a soccer tournament}
+    \label{table:example}
+    \begin{subtable}[t]{0.49\columnwidth}
+      \setcounter{table}{1}
+      \caption{Final Results}
+      \label{table:example:results}
+      \centering
+        \begin{tabular}{@{}lr@{}}
+            \toprule
+            \textbf{results}    &           \\
+            name                & points    \\ 
+            \midrule
+            SpVgg Beelitz       & 4         \\ 
+            Potsdamer SC        & 9         \\ 
+            SpVgg Bernau        & 4         \\ 
+            VfL Potsdam         & 0         \\ 
+            \bottomrule
+        \end{tabular}
+    \end{subtable}
+    \begin{subtable}[t]{0.49\columnwidth}
+      \centering
+        \caption{Participating Goalkeepers}
+        \label{table:example:goalkeeper}
+        \begin{tabular}{@{}ll@{}}
+            \toprule
+            \textbf{goalie} &                   \\
+            p\_id               & club              \\ 
+            \midrule
+            202                 & SpVgg Beelitz     \\ 
+            216                 & SpVgg Beelit\underline{t}z    \\
+            469                 & Potsdamer SC      \\
+            617                 & SpVgg Be\_nau       \\
+            692                 & V\underline{i}L Potsdam       \\
+            853                 & Potsdamer SC      \\
+            \bottomrule
+        \end{tabular}
+    \end{subtable} 
+\end{table}
+
+There are other known extensions to INDs that can deal with dirty data.
+One example is partial INDs~\cite{Bauckmann07}, which allow a certain portion of the dependent tuples to not be present in any form in the referenced tuples.
+Therefore, partial INDs are especially useful when dealing with incomplete columns.
+However, partial INDs provide no insight into what kind of matching failures occur.
+If a significant portion of tuples have a similar, but not equal counterpart, no partial INDs would be found.
+Since half of the goalkeepers in our example have misspelled their club names, we would need to set the error threshold above 50\% to find a partial IND.
+In a typical database, this threshold would lead to many spurious dependencies.
+A special form of partial dependencies are conditional INDs (cINDs), which hold only for tuples that fulfil a certain condition~\cite{Bravo07,Bauckmann12}.
+
+Another example are approximate INDs~\cite{FAIDA}.
+They are discovered on a sample of the complete data and show that an IND holds only with a certain probability.
+This relaxation is used to increase the discovery speed, but not the generality of the found IND\@.
+Moreover, approximate INDs also provide no insight into data errors.
+In our example, typical sampling strategies would lead to different value sets for the columns.
+Therefore, we would not find a dependency in our samples.
+
+% This section outlines multiple use cases for sINDs, which often require modification of the underlying data.
+% However, the scope of this thesis is limited to finding sINDs.
+% Thus, it enables further research into the possibilities of the applications of sINDs. 
+
+Apart from introducing the concept of similarity inclusion dependencies, we present \textbf{\sawfish}, the first approach to efficiently discover sINDs in a given dataset. In particular, we make the following contributions:
+\begin{enumerate}
+  \item We introduce the formal concept of similarity inclusion dependencies.
+  \item We propose \sawfish, an efficient approach to discover all unary sINDs in a given dataset using the edit-distance and the Jaccard similarity measure.
+%  It combines approaches from string similarity joins and IND discovery algorithms.
+  \item We offer an in-depth evaluation of \sawfish, comparing our approach to the state-of-the-art IND discovery algorithm \algorithmName{Binder}~\cite{papenbrock2015divide} and a naive baseline.
+  We show how \sawfish scales with the size of the input data and different algorithm configurations.
+  \item We present a case study that explores the usefulness of the discovered sINDs. We have manually built a ground-truth with over \num{1000} sINDs and publicly provide the annotations.
+  \item We integrate \sawfish on the Metanome data profiling platform~\cite{papenbrock2015metanome}, so it can be easily used with a variety of datasets and compared to other data profiling algorithms. All code is made publicly available.
+\end{enumerate}
+The remainder of this work is structured as follows.
+In Section~\ref{section:related_work2} we present related research on inclusion dependencies, other relaxed dependencies and string similarity joins. 
+We formally define sINDs in Section~\ref{section:background}.
+Section~\ref{section:sind} shows how to efficiently discover sINDs and presents the general principle of \sawfish.
+We present an exhaustive evaluation of \sawfish in Section~\ref{section:evaluation}. 
+Finally, Section~\ref{section:discussion} draws a conclusion and gives insights into the limitations of \sawfish and provides an outlook on future work.

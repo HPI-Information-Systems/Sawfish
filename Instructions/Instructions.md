@@ -2,16 +2,22 @@
 
 The source code and the artifacts required to reproduce the results of the paper “Discovering Similarity Inclusion Dependencies” [1] can be found at the link <https://github.com/HPI-Information-Systems/Sawfish>.
 
----
-
 ## 1. Prerequisites
 
 First, clone the repository on your machine by running:
 `git clone https://github.com/HPI-Information-Systems/Sawfish.git`
 
----
+## 2. Repository Overview
 
-## 2. Execution
+The structure of the repository is the following:
+
+- The `src/` contains the source code of the Sawfish algorithm, including the algorithm itself (`sawfish/main/java/de/metanome/algorithms/sawfish`) and the tests (`sawfish/test/java/de/metanome/algorithms/mock`)
+- The `docker-compose.yml` contains a list of the docker images that are used to run execute and test the Sawfish algorithm in different ways. 
+- The `data_generation/` folder includes all scripts to generate the input data for the testing
+- The `plot_and_paper_generation/` folder includes all scripts to generate the plots and the resulting paper from the output data
+
+## 3. Execution
+
 We offerer different ways to execute Sawfish, but each one of them requires docker and docker compose. If it is not yet installed on your machine, please follow these instructions: <https://docs.docker.com/engine/install/>
 
 Each method differentiates in the ability to customize the output.
@@ -46,9 +52,9 @@ It is not supported to generate the
 <span style="color:red"> Insert Video here <span>
 </details>
 
-### Configurations
+## 4. Execution Configurations
 
-#### Changing parameters
+### Changing parameters
 
 The project contains default values for most configuration options. To run the algorithm, only an input file and the edit distance threshold are required.
 
@@ -65,8 +71,9 @@ Other configuration options are listed below:
 - `ignoreNumericColumns`: ignore columns that only contain numeric values
 - `hybridMode`: turns on the hybrid mode of the normalized edit distance computation in SAWFISH
 
-#### Changing the input data
+### Changing the input data
+
 To change the input data, use the Metanome CLI or Metanome UI. add `-v path/to/your/data:/app/metanome/backend/WEB-INF/classes/inputData/extern` to your docker run command. E.g.:
 `docker run -d -p 8080:8080 -p 8081:8081 -v /path/to/your/data:/app/metanome/backend/WEB-INF/classes/inputData/extern sawfish`
 
-Remember to replace `path/to/your/data` with your custom path. 
+Remember to replace `path/to/your/data` with your custom path.
