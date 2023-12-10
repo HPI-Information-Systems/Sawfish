@@ -29,10 +29,18 @@ YELLOW = "#e09b36"
 GREEN = "#5b7159"
 LIGHT_BLUE = "#696f9b"
 LIGHT_GREEN = "#92ab8e"
-all_data_path = pathlib.Path(script_path / "all_results.csv").resolve()
+script_path = pathlib.Path(__file__).parent.resolve()
+all_results_path = pathlib.Path(script_path.parent / "results").resolve()
+combined_stats_path = pathlib.Path(all_results_path / "combined_stats").resolve()
+all_results_csv = pathlib.Path(combined_stats_path / "all_results.csv").resolve()
+write_path = pathlib.Path(script_path.parent / "paper" / "plots").resolve()
+
+all_results_path.mkdir(parents=True, exist_ok=True)
+combined_stats_path.mkdir(parents=True, exist_ok=True)
+write_path.mkdir(parents=True, exist_ok=True)
 # run_id,algorithm,dataset,edit_distance,mem_limit,row_share,column_share,ignore_short,experiment,runtime,results
 
-data = pandas.read_csv(all_data_path)
+data = pandas.read_csv(all_results_csv)
 data = data[(data["dataset"].isin(datasets)) & (data["edit_distance"] == 1) & (data["algorithm"] == "SAWFISH") & (
         data["mem_limit"] == "unlimited") & (data["row_share"] == 100) & (data["ignore_short"] == False)]
 
@@ -78,5 +86,5 @@ fig.text(0.5, 0.001, '.', ha='center')
 axis[0].legend([box['means'][0], box['medians'][0]], ['mean', 'median'] , loc='upper left')
 
 plt.tight_layout()
-plt.savefig("column_scalingED.pdf", dpi=300)
+plt.savefig(pathlib.Path(write_path / "column_scalingED.pdf"), dpi=300)
 #plt.show()

@@ -31,13 +31,23 @@ GREEN = "#5b7159"
 colors = [YELLOW, BLUE, GREEN]
 similarities = [1.0, 0.4]
 
-all_data_path = pathlib.Path(script_path / "all_results_token.csv").resolve()
+script_path = pathlib.Path(__file__).parent.resolve()
+all_results_path = pathlib.Path(script_path.parent / "results").resolve()
+combined_stats_path = pathlib.Path(all_results_path / "combined_stats").resolve()
+all_results_csv = pathlib.Path(combined_stats_path / "all_results.csv").resolve()
+all_results_token_csv = pathlib.Path(combined_stats_path / "all_results_token.csv").resolve()
+write_path = pathlib.Path(script_path.parent / "paper" / "plots").resolve()
+
+all_results_path.mkdir(parents=True, exist_ok=True)
+combined_stats_path.mkdir(parents=True, exist_ok=True)
+write_path.mkdir(parents=True, exist_ok=True)
+
 # run_id,algorithm,dataset,similarity,mem_limit,row_share,column_share,experiment,runtime,results
 
-data = pandas.read_csv(all_data_path)
+data = pandas.read_csv(all_results_token_csv)
 data = data[(data["dataset"].isin(datasets)) & (data["mem_limit"] == "unlimited") & (data["column_share"] == 100) & (
         data["row_share"] == 100) & (data["experiment"] == "competitors")]
-binder_data = pandas.read_csv(pathlib.Path(script_path / "all_results.csv").resolve())
+binder_data = pandas.read_csv(all_results_csv.resolve())
 binder_data = binder_data[(binder_data["dataset"].isin(datasets)) & (binder_data["mem_limit"] == "unlimited") & (binder_data["column_share"] == 100) & (
         binder_data["row_share"] == 100) & (binder_data["algorithm"] == "BINDER")]
 
@@ -121,6 +131,6 @@ t1 = fig.text(0.00, 0.5, 'Runtime (\% of Longest Run)', va='center', rotation='v
 t2 = fig.text(0.52, 0.965, 'Longest Runtime (s)', ha='center')
 fig.tight_layout()
 #plt.savefig("competitor_bars_" + str(sim) + "_token.pdf", dpi=300)
-plt.savefig("competitor_bars_token.pdf", bbox_extra_artists=(lgd, t1, t2), dpi=300, bbox_inches='tight')
+plt.savefig(pathlib.Path(write_path / "competitor_bars_token.pdf"), bbox_extra_artists=(lgd, t1, t2), dpi=300, bbox_inches='tight')
 #plt.savefig("competitor_bars_token.png", bbox_extra_artists=(lgd, t1, t2), dpi=300, bbox_inches='tight')
 #plt.show()

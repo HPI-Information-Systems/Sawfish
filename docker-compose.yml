@@ -1,5 +1,10 @@
 services:
-  sawfish-master:
-  image: sawfish-master:latest
-  container_name: sawfish-master
+  sawfish-plot-generation:
+    build: 
+      context: .
+      dockerfile: plot_and_paper_generation/Dockerfile
+    volumes:
+      - ./paper/plots:/app/paper/plots
+    image: sawfish-plot-generation:latest
+    container_name: sawfish-plot-generation
   

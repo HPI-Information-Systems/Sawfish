@@ -32,11 +32,22 @@ LIGHT_GREEN = "#92ab8e"
 
 script_path = pathlib.Path(__file__).parent.resolve()
 datasets = ["CENSUS", "WIKIPEDIA", "TPCH", "IMDB"]
+result_path = pathlib.Path(script_path.parent / "results").resolve()
+grow_row_scaling_path = pathlib.Path(result_path / "grow_row_scaling").resolve()
+data_path = pathlib.Path(grow_row_scaling_path / "grow_row_scaling_token.txt").resolve()
+second_data_path = pathlib.Path(grow_row_scaling_path / "new_grow_row_scaling_token_only.txt").resolve()
+third_data_path = pathlib.Path(grow_row_scaling_path / "grow_row_scaling_CENSUS.txt").resolve()
+fourth_data_path = pathlib.Path(grow_row_scaling_path / "grow_row_scaling_IMDB.txt").resolve()
+write_path = pathlib.Path(script_path.parent / "paper" / "plots").resolve()
 
-data_path = pathlib.Path(script_path / "grow_row_scaling_token.txt").resolve()
-second_data_path = pathlib.Path(script_path / "new_grow_row_scaling_token_only.txt").resolve()
-third_data_path = pathlib.Path(script_path / "grow_row_scaling_CENSUS.txt").resolve()
-fourth_data_path = pathlib.Path(script_path / "grow_row_scaling_IMDB.txt").resolve()
+result_path.mkdir(parents=True, exist_ok=True)
+grow_row_scaling_path.mkdir(parents=True, exist_ok=True)
+write_path.mkdir(parents=True, exist_ok=True)
+
+print('EXECUTING alternative_row_plot.py')
+print(write_path)
+
+
 id_regex = re.compile('DS ([A-Z]+) - LEN (\d) - run (\d) - token ([A-Z][a-z]+)')
 data_points = 10
 sample_count = 10
@@ -194,5 +205,10 @@ t3 = fig.text(0.99, 0.5, "Number of sINDs", va='center', rotation='vertical')
 #lax.legend(loc=0)
 lgd = fig.legend(legend_lines, labs, ncol=2, loc='lower center', bbox_to_anchor=(0.5, -0.15))
 fig.set_tight_layout(True)
-# plt.savefig("row_scaling.pdf", bbox_extra_artists=(lgd, t1, t2, t3), dpi=300, bbox_inches='tight')
-plt.show()
+print(write_path)
+try:
+    plt.savefig(pathlib.Path(write_path / "row_scaling.pdf"), bbox_extra_artists=(lgd, t1, t2, t3), dpi=300, bbox_inches='tight')
+except Exception as e:
+    print(e)
+    print("Could not save figure")
+#plt.show()
