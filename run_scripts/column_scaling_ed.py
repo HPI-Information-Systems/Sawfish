@@ -5,12 +5,12 @@ import subprocess
 import re
 
 script_path = pathlib.Path(__file__).parent.resolve()
-config_path = pathlib.Path(script_path / "selected_columns_CENSUS.txt").resolve()
+config_path = pathlib.Path(script_path / "selected_columns.txt").resolve()
 data_path = pathlib.Path(script_path / "../datasets/").resolve()
 sample_path = pathlib.Path(data_path / "current_samples.csv").resolve()
 metanome_path = pathlib.Path(script_path / "../metanome/").resolve()
-result_dir_path = "/column_scaling/"
-result_file = pathlib.Path(script_path / "../results/combined_states/all_results.csv")
+result_dir_path = "/column_scaling_ed/"
+result_file = pathlib.Path(script_path / "../results/combined_states/results_ed.csv")
 
 
 datasets = ["CENSUS", "WIKIPEDIA", "TPCH"]
@@ -24,13 +24,10 @@ for ds in datasets:
         print(column_size)
         current_combinations_set = set()
         while len(current_combinations_set) != number_of_samples:
-            if ds == datasets[0] and column_size == 10 and len(current_combinations_set) > 10:
+            if ds == datasets[1] and column_size == 10 and len(current_combinations_set) > 10:
+                # Since WIKIPEDIA only has 11 columns, we can not find 30 combinations of size 10
                 break
             current_combination = set()
-            # TODO: At ds == datasets[1] and column_size 10,
-            # It repeats forever (the len of current_combination goes up to 9, and then resets to an empty one)
-            if ds == datasets[1] and column_size == 10:
-                print(len(current_combinations_set))
             while len(current_combination) != column_size:
                 current_combination.add(random.randrange(column_count[ds]))
             current_combinations_set.add(frozenset(current_combination))
@@ -70,14 +67,14 @@ for ds in datasets:
                         break
                     writer.writerow(row)
                     index += 1
-            classpath = f'"{metanome_path / "metanome-cli-1.1.1.jar"}":"{metanome_path / "similarity_ind-1.1-SNAPSHOT.jar"}"'
+            classpath = f'"{metanome_path / "metanome-cli-1.1.1.jar"}":"{metanome_path / "sawfish-1.1-SNAPSHOT.jar"}"'
             output_file_path = f'"{result_dir_path}/result_{ds}_{len(current_combination)}_{idx}"'
             samples_file_path = f'"{data_path / "current_samples.csv"}"'
 
             command = (
                 f'java -Xmx8g -cp {classpath} de.metanome.cli.App '
                 f'-o file:{output_file_path} '
-                f'--algorithm de.metanome.algorithms.similarity_ind.AlgorithmInterface '
+                f'--algorithm de.metanome.algorithms.sawfish.SawfishInterface '
                 f'--files {samples_file_path} '
                 f'--input-key INPUT_FILES '
                 f'--separator ";" '
@@ -102,5 +99,4 @@ for ds in datasets:
                         runtime = runtime.group(1)
                         results_count = results_count.group(1)
 
-                        # TODO: Calculate column share
-                        f.write("%s,SAWFISH,%s,1,unlimited,100,%s,False,column,%s,%s\n" % (idx, ds,"TODO: FILL", runtime, results_count))
+                        f.write("%s,SAWFISH,%s,1,100,%s,False,column,%s,%s\n" % (idx, ds,len(current_combination), runtime, results_count))

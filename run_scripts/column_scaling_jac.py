@@ -7,12 +7,12 @@ import re
 from concurrent.futures import ThreadPoolExecutor
 
 script_path = pathlib.Path(__file__).parent.resolve()
-config_path = pathlib.Path(script_path / "selected_columns_token_IMDB.txt").resolve()
+config_path = pathlib.Path(script_path / "selected_columns_token.txt").resolve()
 data_path = pathlib.Path(script_path / "../datasets/").resolve()
 metanome_path = pathlib.Path(script_path / "../metanome/").resolve()
 sample_path = pathlib.Path(data_path / "current_samples.csv").resolve()
-result_dir_path = "/column_scaling_token/"
-result_file = pathlib.Path(script_path / "../results/combined_stats/all_results_token.csv")
+result_dir_path = "/column_scaling_jac/"
+result_file = pathlib.Path(script_path / "../results/combined_stats/results_jac.csv")
 
 datasets = ["CENSUS", "WIKIPEDIA", "TPCH", "IMDB"]
 column_sizes = {datasets[0]: [2, 6, 10, 14, 18, 22, 26, 30, 34, 38], datasets[1]: [2, 3, 4, 5, 6, 7, 8, 9, 10], datasets[2]: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50], datasets[3]: [4, 13, 22, 31, 40, 49, 58, 67, 76, 85]}
@@ -78,7 +78,7 @@ for ds in datasets:
             mv_command = "cat %s > " % ' '.join([f'"{str(pathlib.Path(data_path / ("current_samples_%s.csv" % i)).resolve())}"' for i in range(number_of_process)]) + f'"{str(sample_path)}"'
             subprocess.run(mv_command, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
 
-            classpath = f'"{metanome_path / "metanome-cli-1.1.1.jar"}":"{metanome_path / "similarity_ind-1.1-SNAPSHOT.jar"}"'
+            classpath = f'"{metanome_path / "metanome-cli-1.1.1.jar"}":"{metanome_path / "sawfish-1.1-SNAPSHOT.jar"}"'
 
             output_file_path = f'"{result_dir_path}/result_{ds}_{len(current_combination)}_{idx}"'
             samples_file_path = f'"{data_path / "current_samples.csv"}"'
@@ -86,7 +86,7 @@ for ds in datasets:
             command = (
                 f'java -Xmx8g -cp {classpath} de.metanome.cli.App '
                 f'-o file:{output_file_path} '
-                f'--algorithm de.metanome.algorithms.similarity_ind.AlgorithmInterface '
+                f'--algorithm de.metanome.algorithms.sawfish.SawfishInterface '
                 f'--files {samples_file_path} '
                 f'--input-key INPUT_FILES '
                 f'--separator ";" '
@@ -107,5 +107,4 @@ for ds in datasets:
                         runtime = runtime.group(1)
                         results_count = results_count.group(1)
 
-                        # TODO: Calculate column share
-                        f.write("%s,SAWFISH,%s,0.4,unlimited,100,%s,TRUE,column,%s,%s\n" % (idx, ds,"TODO: FILL", runtime, results_count))
+                        f.write("%s,SAWFISH,%s,0.4,100,%s,column,%s,%s\n" % (idx, ds,len(current_combination), runtime, results_count))

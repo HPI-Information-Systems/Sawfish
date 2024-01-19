@@ -40,6 +40,7 @@ Please note that you might need to change the dataset configuration in Metanome 
 ## Repeatibility
 
 The datasets that were used in the publication are available [here](https://hpi.de/naumann/projects/repeatability/data-profiling/metanome-ind-algorithms.html).
+To recreate the paper, please follow the instructions provided in [REPRODUCIBILITY_INSTRUCTIONS.md](REPRODUCIBILITY_INSTRUCTIONS.md).
 
 ## Joinability Case Study
 

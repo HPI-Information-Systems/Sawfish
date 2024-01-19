@@ -11,26 +11,10 @@ A prominent representative for n-ary, i.e., inclusion between tuples of attribut
 It combines both up- and downwards pruning to discover maximal n-ary INDs efficiently.
 
 
-%\citeauthor{SPIDER} presented \algorithmName{Spider} to discover unary INDs in tables~\cite{SPIDER}.
-%Similar to \sawfish, \algorithmName{Spider} does not use data type information to reduce the candidate space for unary IND discovery.
-%It is able to discover all unary INDs with a single pass over ordered data. 
-%To this end, the algorithm first sorts the data if necessary and then discovers all INDs in parallel.
-%Its special data structure enables it to synchronize cursor movements across all columns to not miss any IND\@.
-%This approach is not feasible for sINDs:
-%due to the similarity measure, it is not possible to sort the data in a way to find similar cursor movement rules.
-%\citeauthor{PrefixINDs} shows an extension of \algorithmName{Spider} that allows different prefixes and suffixes in the referenced values~\cite{PrefixINDs}.
-%This can be regarded as a predecessor to sINDs, because it allows some differences between the values.
-%However, it allows violations only for referenced values.
-%The author achieves this by adding special cursor-moving rules and correctness checks.
-%\citeauthor{bauckmann2010efficient} also presented an extension of \algorithmName{Spider} to detect partial INDs~\cite{bauckmann2010efficient}.
-%It uses a pre-defined threshold of how many values are allowed to be missing in the referenced attribute.
-%Thus, the cursor movement rules are extended to count the number of mismatches and abort only after the threshold is reached.
 In particular, \sawfish adapts a few techniques from the algorithm \algorithmName{Binder}~\cite{papenbrock2015divide}.
-%\citeauthor{papenbrock2015divide} presented \algorithmName{Binder}, a divide and conquer-based algorithm to detect both unary and n-ary INDs~\cite{papenbrock2015divide}.
 Initially, \algorithmName{Binder} splits the input data into buckets for each attribute. 
-It uses hash-partitioning to distribute the values evenly and place equal values into the same bucket. %, thus also deduplicating the input data.
+It uses hash-partitioning to distribute the values evenly and place equal values into the same bucket.
 If main memory is exhausted, the largest buckets are written to disk, allowing \algorithmName{Binder} to scale to large datasets.
-%The input handling of \sawfish %shares some ideas with this approach.
 To validate IND candidates, \algorithmName{Binder} loads data partitions into the main memory.
 Each partition contains one bucket from each attribute with the same bucket number.
 As the bucket number relates to the hash value, equal values of different attributes are in the same partition.
@@ -42,14 +26,7 @@ The input-handling of \sawfish also splits the column values into different buck
 However, it cannot use hash-partitioning due to the similarity measure, so it uses an adaptive main memory handling---presented in detail in Section~\ref{section:sawfish:preprocessing}.
 \sawfish also loads chunks of data into main memory and checks remaining sIND candidates to validate sIND candidates.
 We detail our validation strategy in Section~\ref{section:impl:sawfish}.
-%However, it cannot refine a partition due to the similarity measure.
-%Therefore, it loads the buckets of a fixed set of columns that are known to fit into main memory.
-%This process is repeated until it handled all columns.
-%Furthermore, the validation process of \algorithmName{Binder} is able to disprove multiple IND candidates simultaneously.
-%\sawfish cannot rely on a similar mechanism, because a single value can be similar to multiple other values.
-%Therefore, it validates each candidate sIND separately.
 
-%\subsection{Relaxed Dependencies}
 Similarly to how sINDs extend the concept of INDs, there are examples of such relaxations of other dependencies--- see~\citeauthor{caruccio2016relaxed} for an overview of relaxed FD approaches~\cite{caruccio2016relaxed}.
 As mentioned in the introduction, matching dependencies (MDs) are a prominent extension of functional dependencies (FDs).
 Like sINDs, they incorporate a similarity measure to find additional dependencies in the data.
@@ -62,67 +39,18 @@ To quickly find counterexamples for an MD candidate, \algorithmName{HyMD} can co
 After comparing every record pair, the inferred MDs are the correct solution set.
 We cannot use inference from record pairs, because we cannot infer the validity of an sIND from only a record pair.
 Since a single value can be similar to multiple other values, a record pair that shows that a value is not similar to another value does not disprove the validity of an sIND.
-%Only if a value is checked against \emph{all} values of the other attribute, it can disprove an sIND.
 \algorithmName{HyMD} computes the similarity of every value pair beforehand to access it quickly when validating MDs.
 Our approach avoids this preprocessing and computes the similarity while validating.
 Thus, we can save many unnecessary computations, because only those value pairs that we actually process are compared.
 
-%A different way of relaxing dependencies is to approximate the validation of dependencies, so the dependency holds with only a certain probability.
-%In contrast to sINDs, this relaxation is not meant to find a wider range of data dependencies.
-%It is rather aimed at increasing the validation speed, while allowing some erroneous results of the algorithm.
-%\citeauthor{FAIDA} presented an approach that discovered approximate INDs by hashing all input values and using HyperLogLog sketches to validate the INDs~\cite{FAIDA}.
-%Their approach guarantees to find all valid INDs, but might include false positives in the result set.
-%Since they hash all input values, similar values can be hashed vastly differently. Therefore, the sketches would also differ, and the validation would fail.
-%Again, that approach cannot yet be adapted to sINDs, since the initial hashing would need to be locality sensitive.
-%However, there exists not a sufficiently accurate locality sensitive hashing method for the edit distance to date~\cite{marccais2019locality}.
-%
-%Moreover, data dependencies can be relaxed by requiring that they hold only on a certain portion of the data.
-%This type of relaxation is sometimes also called approximation.
-%, but it is a different concept to the aforementioned probability-based algorithms.
-%For clarity, we call these data dependencies that hold only on a certain portion of the data, partial dependencies.
-%\citeauthor{kruse2018approximate} studied partial FDs and partial unique column combinations~\cite{kruse2018approximate}.
-%They were able to quickly validate candidates through focused sampling.
-%Since \sawfish should check all values to guarantee a valid sIND, it would not benefit from this method.
-%\citeauthor{pena2019denial} presented an approach to discover partial denial constraints (DCs)~\cite{pena2019denial}.
-%They modified the evidence set used to validate DCs, so it tolerated some missing evidence.
-%However, since we do not need to build an evidence set to validate sINDs, their adaptions cannot benefit \sawfish.
-%
-%\subsection{String Similarity Joins}
-%\label{section:related:simjoin}
 Finally, string similarity joins and sINDs share a related sub-problem.
 Like sINDs, for a large set of strings, string similarity joins need to identify similar strings based on some similarity measure to execute the join.
-%Formally, the problem is defined as follows: given two sets of strings, the goal is to find all pairs of strings from both sets that are similar based on some similarity measure.
 \citeauthor{StringSimSurvey} provide an overview of different approaches~\cite{StringSimSurvey}.
 Most methods either use specific substrings or a tree-like data structure to compute the similarity of two strings.
 For example, the algorithm \algorithmName{TrieJoin} uses a trie to efficiently calculate the similarity~\cite{feng2012trie}.
 
-%\citeauthor{gravano2001approximate} presented an initial approach to support string similarity joins on top of existing databases~\cite{gravano2001approximate}.
-%They employ different filtering techniques based on positional q-grams.
-%Q-grams are defined as all overlapping substrings with length q of an input string.
-%Additionally, the start position of each q-gram is stored.
-%They propose three filters to determine whether two strings $x, y$ can have an edit distance $\leq k$.
-%First, a length filter checks, whether the length difference of the strings is greater than $k$.
-%Second, a count filter intersects the sets of q-grams without considering the position.
-%If two strings are similar, they share at least a certain number of q-grams.
-%Third, a position filter compares the start positions of matching q-grams, so their difference is within $k$.
-%While their work provides a reduction of the number of edit distance computations, it still has to consider every string pair.
-%Therefore, \sawfish{} uses a method that also reduces the number of string pairs that need to be evaluated. 
-%However, it employs a similar length filter on the attribute level.
-%If the longest string of an attribute $A$ is more than $k$ characters longer than the longest string of an attribute $B$, $A$ cannot depend on $B$.
-%The same intuition can also be used for the shortest strings of attributes.
-%
-%\citeauthor{feng2012trie} index one of the string sets in a trie and uses the other strings to probe the trie~\cite{feng2012trie}.
-%A trie is a special tree, which stores an input string in a path from root to leaf, and each node represents a single character.
-%Thereby, it can merge equal prefixes.
-%For each string, it traverses the trie and maintains a set of active nodes, which corresponds to a set of strings that might still be similar to the input string.
-%If the active node set is empty, the algorithm can abort.
-%If the algorithm reaches a leaf node, it can output all the active nodes as similar strings.
-%This approach performs best for short strings.
-%While sINDs are typically detected in shorter columns, there is a better performing alternative in the \algorithmName{PassJoin} algorithm both for short and long strings~\cite{Jiang2014StringSJ}.
 
 \sawfish uses the underlying method of \algorithmName{PassJoin}~\cite{PassJoin} to find similar strings for a dependent value when using the edit distance as its similarity measure.
-%and adapts it to fit our needs.
-%It was presented by \textcite{PassJoin}.
 The author's observation is based on the pigeonhole principle: Assume an edit distance threshold $\tau$, two strings $x,y$ and $ED(x,y) \leq \tau$. 
 If we split $x$ into $\tau + 1$ disjoint segments, there exists a substring of $y$ that is equal to one of the segments.
 Otherwise, we would need at least one edit operation for each segment to transform it to a substring of $y$.
@@ -133,7 +61,6 @@ We observe that there is no substring in \data{SpVgg Beelitz} that matches any o
 Therefore, we know that these club names are not similar without computing their actual edit distance.
 This segment filter effectively prunes dissimilar string pairs.
 Moreover, based on this filter, an inverted index of the segments to the indexed elements can be built.
-%Thus, only string pairs that pass the filter are processed.
 Additionally, \citeauthor{PassJoin} presented techniques to reduce the number of substrings that need to be compared to the segments.
 They also improve the exact edit distance computation based on their segmentation filter.
 We detail our usage of the validation techniques in Section~\ref{section:sind}.
@@ -146,5 +73,3 @@ Next, it computes a threshold $T = \frac{\delta}{1+\delta}(|\text{token}(x)| + |
 Afterwards, all strings $y \in Y$ that have a count $\geq T$ are directly compared to $x$ to compute their actual Jaccard similarity.
 We improve this version for our needs and show the modified version in Section~\ref{section:sind}.
 Note that we cannot use the popular \algorithmName{minHash}~\cite{Wu2022MinHash} to discover similar strings, because it is only an estimation of the Jaccard similarity.
-%Moreover, as we explain in Section~\ref{section:background}, we limit the number of tokens per string to 10, so we do not need to reduce the number of tokens per string.
-%In conclusion, \citeauthor{PassJoin} present in their evaluation that \algorithmName{PassJoin} outperforms all other string similarity join techniques for both short and long strings~\cite{PassJoin}.

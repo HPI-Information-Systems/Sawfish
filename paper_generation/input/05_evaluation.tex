@@ -1,35 +1,20 @@
 \section{Experimental Evaluation}
 \label{section:evaluation}
-%In this section, we evaluate \sawfish.
-%We present our experimental setup, as well as the main results.
 Our evaluation of \sawfish includes a comparison with two competitors, and we investigate the scaling behavior of \sawfish.
 Finally, we look into the actual dependencies that \sawfish produces, and examine their usefulness. We publicly provide all source code\footnote{\url{https://github.com/HPI-Information-Systems/Sawfish}}.
 
 \subsection{Experimental Setup}
 All experiments were run on an Ubuntu-based (20.04 LTS) server, equipped with two Intel Xeon E5-2650 processors and 256~GB of RAM\@.
-%All algorithms are single-threaded and use only one processor core.
 All algorithms are single-threaded, running on Java~11 and reading their input data from CSV files.
 We do not use the entire main memory, but set explicit memory limits for the Java Virtual Machine.
 We use a 4~GB limit for all datasets, except for the \emph{IMDB} dataset, which uses 32~GB.
 Moreover, we set a time limit of 24~hours, aborting executions that exceeded that time threshold. 
 Unless stated otherwise, all experiments were run three times, and we present the mean of the runs.
 
-%\subsubsection{Implementation}
 \sawfish is compatible with the \emph{Metanome} data profiling platform~\cite{papenbrock2015metanome},
-%, which is designed as a  framework, so researchers can contribute their algorithms and test them with different data sources.
 which handles both file and database backed inputs and provides a unified view for the algorithms.
-%Therefore, algorithms can be tested with a wide variety of data without requiring explicit implementation effort by the algorithm creator.
-%Moreover, other software in the \emph{Metanome} ecosystem facilitates data profiling research.
-%For example, 
-We used the \emph{metanome-cli} to conduct the experiments in a repeatable and efficient way. %\footnote{\url{https://github.com/sekruse/metanome-cli}}.
+We used the \emph{metanome-cli} to conduct the experiments in a repeatable and efficient way. 
 
-%We implemented \sawfish in Java.
-%However, the approach described in the previous section is portable to other languages.
-%The only Java-specific implementation detail is in the formula for the index memory in Section~\ref{subsection:sind:optimizations:buffer}, because Java uses two bytes per character in a string.
-%In our implementation, we use almost exclusively plain Java, except for primitive collections, where we used the fastutil library.
-%e.g., the built-in \code{HashMap} for the inverted index.
-
-%\subsubsection{Datasets}
 We use four publicly available datasets\footnote{\url{https://hpi.de/naumann/projects/repeatability/data-profiling/metanome-ind-algorithms.html}}: three real-world datasets, and the synthetic TPC-H dataset.
 Table~\ref{table:eval:datasets} shows the datasets and their characteristics.
 The number in parentheses indicates the number of ignored attributes (due to values containing more than 50 characters or more than ten tokens).
@@ -52,11 +37,8 @@ IMDB      & \num{3790}        & 108 (14)              & \num{36244344}  & \num{4
 
 
 
-%\subsubsection{Competitors}
-%We compare \sawfish to two different competitors.
 Because there exists no other sIND detection algorithm, we compare \sawfish to a traditional IND detection algorithm and a baseline.
 For the former, we choose the state-of-the-art algorithm \algorithmName{Binder}~\cite{papenbrock2015divide} using the authors' implementation.
-%We already presented \algorithmName{Binder} in Section~\ref{section:related_work2} and use its implementation in Metanome\footnote{\url{https://github.com/HPI-Information-Systems/inclusion-dependency-algorithms}}.
 \algorithmName{Binder} solves a specialized task in comparison to \sawfish, implicitly setting $\tau = 0$. Thus, it can use techniques more tailored to the traditional IND discovery, as we explained in Section~\ref{section:related_work2}.
 
 Also, we compare \sawfish to a baseline solution for each similarity measure -- an approach based on the original string similarity join algorithms \algorithmName{PassJoin}~\cite{PassJoin} and \algorithmName{ScanCount}~\cite{StringSimSurvey}.
@@ -68,7 +50,6 @@ Therefore, \sawfish also ignores shorter strings when comparing both algorithms.
 Since \sawfish can handle strings that are shorter than the edit distance threshold, we process all strings up to length 50 in the other experiments.
 Additionally, we implement the commonly known length filter, which compares the minimum and maximum lengths of column pairs.
 For \algorithmName{ScanCount}, we did not find a suitable Java implementation, so we implemented a plain Java version ourselves.
-%We expect \sawfish to outperform this baseline, because it uses efficient pruning techniques and reduces the number of unnecessary comparisons with the index. After all, our goal is not to produce the join result, but only to find out whether one column forms an sIND with the other.
 
 \subsection{Runtime Scalability}
 This section examines how \sawfish scales in different dimensions.
@@ -76,54 +57,17 @@ We investigate the row and column scalability.
 Additionally, we analyze the runtime impact of the edit distance threshold.
 
 \subsubsection{Row Scalability}
-%The runtime of \sawfish depends on the size of the processed dataset.
-%We investigate the impact of the input size in two dimensions.
-%On the one hand, we scale the number of rows.
-%On the other hand, we scale the number of columns.
-%This experiment focuses on the impact of the length of a dataset, i.e., the number of rows.
-%It does not influence the number of sIND candidates: as each column can form an sIND with each other column, the candidate set size depends only on the number of columns.
 This experiment investigates the runtime scalability with the number of rows. 
 We used random samples: starting with 10\% of the input dataset and then gradually growing the sample size by 10\%.
 We repeated this experiment 10 times and plotted the mean and standard deviation.
-%To investigate row scalability, we start with a random sample of 10\% of the input dataset and grow it in each step by another 10\%.
-%We repeated this experiment 10 times and plot .
-%process them with \sawfish.
-%Thus, we keep the internal structure of the dataset.
-%For example, if a dataset contains many duplicates, our sample should contain duplicates as well.
-% \citeauthor{dursch2019eval} evaluated the row scalability by concatenating the input dataset multiple times~\cite{dursch2019eval}.
-% This creates a lot of duplicates.
-% Since the IND discovery operates on the value sets, it mainly tested the deduplication mechanisms.
-% By contrast, our evaluation more closely measures the real row scalability.
 
 We present the results for the \emph{CENSUS}, \emph{WIKIPEDIA}, \emph{TPC-H}, and \emph{IMDB}~($JAC$ mode only) datasets in Figure~\ref{fig:eval:row}.
 We do not show the \emph{IMDB} dataset in $ED$ mode, as processing the entire dataset exceeds our time limit of 24~hours, as shown in Figure~\ref{fig:eval:comparsion_ed}.
-%For each dataset, we sampled ten different row shares in 10\% increments.
-%All data samples could be processed with a memory limit of 4~GB.
 We set the edit distance threshold $\tau=1$ and the Jaccard similarity threshold $\delta = 0.4$.
-The solid yellow and blue lines show the runtime of the $JAC$ mode and $ED$ mode, respectively. %the increasing runtime with an increasing data amount.
-%Moreover, the number of sINDs is presented as a dashed black line.
+The solid yellow and blue lines show the runtime of the $JAC$ mode and $ED$ mode, respectively.
 The numbers of sINDs are presented as dashed lines in the respective colors.
-%Interestingly, on the \emph{WIKIPEDIA} dataset the result size stays almost constant, while it continuously increases on the \emph{TPC-H} dataset.
-%However, in both datasets, \sawfish exhibits a near linear scaling.
-%Additionally, we observe a slightly better runtime for smaller data sizes in both datasets.
-%
-%\begin{figure}[ht]
-%    \centering
-%    \includegraphics[width=\columnwidth]{figures/evaluation/row_scaling_WIKIPEDIA.pdf}
-%    \caption{Row scalability on the \emph{WIKIPEDIA} dataset}
-%    \label{fig:eval:row_WIKI}
-%\end{figure}
-%\begin{figure}[ht]
-%    \centering
-%    \includegraphics[width=\columnwidth]{figures/evaluation/row_scaling_TPCH.pdf}
-%    \caption{Row scalability on the \emph{TPC-H} dataset}
-%    \label{fig:eval:row_TPC}
-%\end{figure}
 
 We observe that \sawfish exhibits a near perfect linear scaling, both in $ED$ mode and $JAC$ mode.
-%This behavior is interesting, because the result size stays almost constant for the \emph{WIKIPEDIA} dataset, while it continuously grows for the \emph{TPCH} dataset.
-%This experiment shows that \sawfish is able to deal with larger row counts.
-%We observe that in this experiment, the runtime is not dependent on the result set size:
 We also observe that the runtime is not dependent on the result set size: in the \emph{CENSUS} and the \emph{WIKIPEDIA} datasets the result set size is almost constant, but the runtime increases similarly to the \emph{TPC-H} and the \emph{IMDB} datasets, where the result set size continuously grows.
 However, this independence of runtime and result set size is related to our experimental setup.
 \sawfish benefits from discarding sIND candidates early.
@@ -142,11 +86,6 @@ These artifacts can be linked to the individual dataset characteristics.
 If we find dependent values that have many matches in the inverted index, but are in fact dissimilar to all referenced values, the validation takes longer.
 By increasing row set sizes, we also increase the number of ``strong'' counterexamples, i.e., counterexamples with no index matches.
 We observe a similar behavior in Section~\ref{subsection:similarity_measure_scalability}.
-%This behavior can be explained by \sawfish's core idea.
-%To validate an sIND candidate, we need to make sure that there is a matching value in the referenced column for every dependent value.
-%However, if the sampling removes most, but not all, counterexamples for an sIND candidate, the validation process takes longer.
-%While we do not discover that sIND, we need to go through a lot of valid values until finding the counterexamples.
-%Moreover, the process of \enquote{proving} a counterexample can be more time-consuming per value than validating, because we need to iterate all index matches instead of aborting after finding a valid match.
 
 
 \begin{figure}[ht]
@@ -157,43 +96,22 @@ We observe a similar behavior in Section~\ref{subsection:similarity_measure_scal
 \end{figure}
 
 \subsubsection{Column Scalability}
-%In this section, we want to examine \sawfish's column scalability.
 Next, we investigate the scalability of \sawfish with an increasing number of columns.
 For this experiment, we randomly sampled column sets for each of the ten column set sizes.
 We used 30 samples for each size to accommodate the high variance from different column sets, because the runtime depends on the number of valid sINDs that happen to hold in that sample.
-%Similarly to the row scalability experiment, we randomly sampled columns from the input dataset and processed them.
-%However, unlike increasing the number of rows, increasing the number of columns does increase the number of sIND candidates.
-%Moreover, the runtime of different column combinations varies widely, depending on the number of valid sINDs that happen to hold in that sample.
 To explain the variance, we take another look at our introductory example, regarding two sets of two columns each.
 Let the first set consist of column \mbox{\emph{results[$\mathtt{name}$]}} and column \mbox{\emph{goalie[$\mathtt{p\_id}$]}}, and the second consist of column \emph{results[$\mathtt{name}$]} and column \emph{goalie[$\mathtt{club}$]}.
 As the sIND \emph{results[$\mathtt{name}$]~$\simIND{}$~goalie[$\mathtt{club}$]} as well as the symmetric counterpart are valid, \sawfish needs to iterate through both columns, build indices, and validate all dependent values.
 On the other hand, we can already determine after preprocessing that there are no sINDs in the first column set, because of their length difference.
 Thus, \sawfish can process it much faster.
 We investigate the impact of valid dependencies in Section~\ref{subsection:evaluation:valid_impact}.
-%For our experiment, we sample 30 random column sets for each of the ten sample sizes per dataset. % to ensure the validity of our results.
-%While in theory, we could try to process all column sets of each sample size, there are too many combinations of a certain size.
-%Let $n$ be the total number of columns and $m$ be the size of the column set.
-%There are $\binom{n}{m}$ possible $m$-sized column combinations.
-%If we want to investigate column sets of size $30$ of the \emph{TPC-H} dataset, there are $\binom{55}{30} = 3.09 \cdot 10^{15}$ different column sets.
-%Thus, we look at a fixed number of column sets and still observe differences with increasing column counts.
 To emphasize the variance between the results, we present boxplots for each sample size.
 Figure~\ref{fig:eval:column_ED} shows the results for the column scalability of the \emph{CENSUS}, \emph{WIKIPEDIA} and \emph{TPC-H} datasets in $ED$ mode.
 We omit the \emph{IMDB} dataset for the same reasons as in our row-scaling experiment.
-%We sampled ten equidistant data points, starting from column set size~2 and increased the set size by~1 in each step.
-%Additionally, we processed the entire dataset of 11 columns.
-%Moreover, the variance for column set size 10 is also smaller, because there are only 11 sets to sample, since $\binom{11}{10} = 11$.
-%
-%\begin{figure}[ht]
-%      \centering
-%        \includegraphics[width=\columnwidth]{figures/evaluation/column_scalingED}
-%    \caption{Column scaling}
-%    \label{fig:eval:columnScalling}
-%\end{figure}
 
 Since the number of sIND candidates grows quadratically in the number of columns, one could expect a quadratic scaling.
 However, we observe a linear scaling.
 In our experimental setup of sampling from an input dataset, the number of valid sIND candidates on average grows linearly with the number of columns.
-%Thus, we do not see a quadratic increase in runtime.
 Additionally, we find that \sawfish's runtime in general does not grow over-proportionally with rising data amounts.
 This shows the effectiveness of \sawfish's memory handling.
 
@@ -206,88 +124,36 @@ On the other hand, there are two outliers for column set sizes 3 to 5 that have 
 For column set size 2, there are also a few outliers.
 These are artifacts related to the difference between processing a valid sIND and quickly discarding an invalid candidate, as we explained before.
 However, they are also related to the dataset ``shape''.
-%This is especially visible for the heavy outliers for column set sizes 2 and 10.
 The \emph{WIKIPEDIA} dataset consists of two tables:
 Table~1 is wider, while Table~2 is longer.
 There exists the valid sIND \emph{Table1[$\mathtt{column9}$]} $\simIND{}$ \emph{Table2[$\mathtt{column1}$]}.
 It takes roughly 40~seconds to validate this sIND alone, explaining the extreme outlier for column set size~2.
 This sIND is also responsible for the two outliers for column set size~10.
 There are similar explanations for the other outliers.
-%There are three other columns that depend on \emph{Table2[column1]}, too.
-%Thus, if the column set misses \emph{Table2[column1]}, the runtime is drastically reduced.
-%Moreover, if the column set misses \emph{Table1[column9]}, the runtime is also nearly halved.
-%This reduction shows how single sIND candidates can dominate the runtime of the entire algorithm.
 
 When using $JAC$ as similarity measure, the results in Figure~\ref{fig:eval:column_JAC} for the \emph{WIKIPEDIA} dataset look quite similar.
 While we can process the data faster overall, the scalability differs not much.
 We observe similar outliers because they are not specific to the $ED$ mode.
 
-%\begin{figure}[t]
-%    \centering
-%    \includegraphics[width=\columnwidth]{figures/evaluation/column_scaling_WIKIPEDIA.pdf}
-%    \caption{Column scalability experiment on the \emph{WIKIPEDIA} dataset}
-%    \label{fig:eval:column_WIKI}
-%\end{figure}
-%\begin{figure}[t]
-%    \centering
-%    \includegraphics[width=\columnwidth]{figures/evaluation/column_scaling_TPCH.pdf}
-%    \caption{Column scalability experiment on the \emph{TPC-H} dataset}
-%    \label{fig:eval:column_TPC}
-%\end{figure}
 \begin{figure}
     \centering
     \begin{subfigure}[t]{0.4\textwidth}
         \vskip 0pt
         \centering
-        \includegraphics[width=\textwidth]{figures/column_scalingED.pdf}
+        \includegraphics[width=\textwidth]{figures/column_scaling_ed.pdf}
         \caption{$ED$ mode ($\tau = 1$)}
         \label{fig:eval:column_ED}
     \end{subfigure}
     \begin{subfigure}[t]{0.4\textwidth}
         \vskip 0pt
         \centering
-        \includegraphics[width=\textwidth]{figures/column_scaling_JAC.pdf}
+        \includegraphics[width=\textwidth]{figures/column_scaling_jac.pdf}
         \caption{$JAC$ mode ($\delta = 0.4$)}
         \label{fig:eval:column_JAC}
     \end{subfigure}
     \caption{Column scalability on different datasets}
     \label{fig:eval:column}
 \end{figure}
-%\begin{figure*}[ht]
-%    \centering
-%    \rotatebox{90}{\textbf{\small \hspace{2cm}$ED$ mode ($\tau = 1$)}}
-%    \hspace{1cm}
-%    \begin{subfigure}[b]{0.35\textwidth}
-%        \centering
-%        \includegraphics[width=\textwidth]{figures/evaluation/column_scaling_WIKIPEDIA-crop.pdf}
-%        \caption{\emph{WIKIPEDIA} dataset}
-%        \label{fig:eval:column_WIKI}
-%    \end{subfigure}
-%    \hspace{2cm}
-%    \begin{subfigure}[b]{0.35\textwidth}
-%        \centering
-%        \includegraphics[width=\textwidth]{figures/evaluation/column_scaling_TPCH-crop.pdf}
-%        \caption{\emph{TPC-H} dataset}
-%        \label{fig:eval:column_TPC}
-%    \end{subfigure}\\
-%    \rotatebox{90}{\textbf{\small \hspace{1cm}$JAC$ mode ($\delta = 0.4$)}}
-%    \hspace{1cm}
-%    \begin{subfigure}[b]{0.35\textwidth}
-%        \centering
-%       \includegraphics[width=\textwidth]{figures/evaluation/column_scaling_WIKIPEDIA_token-crop.pdf}
-%        \caption{\emph{WIKIPEDIA} dataset}
-%        \label{fig:eval:column_WIKI_token}
-%    \end{subfigure}
-%    \hspace{2cm}
-%    \begin{subfigure}[b]{0.35\textwidth}
-%        \centering
-%        \includegraphics[width=\textwidth]{figures/evaluation/column_scaling_TPCH_token-crop.pdf}
-%        \caption{\emph{TPC-H} dataset}
-%        \label{fig:eval:column_TPC_token}
-%    \end{subfigure}
-%    \caption{Column scalability on different datasets}
-%    \label{fig:eval:column}
-%\end{figure*}
 
 For the \emph{TPC-H} dataset, \sawfish's column scaling behaves similarly.
 Figure~\ref{fig:eval:column} also shows some outliers in $ED$ mode.
@@ -314,41 +180,14 @@ For the $ED$ mode, this is the number of allowed edits $\tau$.
 For the $JAC$ mode, this is the similarity threshold $\delta$.
 
 \paragraph{Edit Distance Threshold}
-%
-%As we explained in Section~\ref{section:background:problem}, the Levenshtein neighborhood of a string grows exponentially in $\tau$.
-%We can observe this phenomenon in our inverted index.
-%Due to the higher $\tau$, we segment the string in more parts.
-%Thus, each segment consists of fewer characters and its pruning power decreases.
-%Therefore, we expect to generate more false positives, which increases the runtime. 
-%Increasing $\tau$ also leads to a higher number of simple sINDs, as there are more columns that only contain values, which have $\leq \tau$ characters.
-%However, this cannot offset for the larger result set and the increased validation effort.
-%
 We investigate the edit distance threshold on two datasets:  \emph{CENSUS} and \emph{WIKIPEDIA}.
-%Both can be processed with a memory limit of 4~GB, regardless of the edit distance threshold.
 We run \sawfish with an edit distance threshold $\tau$ between $0$ and $6$.
 We choose 6 as the upper bound, because beyond that threshold a majority of the strings consists of less than $\tau$ characters.
 We do not evaluate the other datasets, as they cannot be processed for $\tau = 6$ within our time limit of 24~hours.
 Figure~\ref{fig:eval:ed} shows the results for the \emph{CENSUS} dataset.
 We plot the runtime and the number of valid sINDs.
 While the runtime stays almost constant for lower edit distance thresholds, it quickly rises for $\tau \geq 4$.
-%The runtime stays almost constant at around 4~seconds until $\tau = 3$.
-%At $\tau = 4$, it roughly doubles to 9~seconds.
-%Afterwards, the runtime increases to 12~seconds for $\tau = 5$ and 14~seconds for $\tau = 6$.
-%Thus, the runtime more than triples for the observed edit distances.
-%However, we cannot observe an exponential increase in runtime.
 In contrast, the result set grows over the entire experiment, despite a growing number of simple sINDs (all value lengths are $\leq \tau$).
-%\begin{figure}[t]
-%    \centering
-%    \includegraphics[width=\columnwidth]{figures/evaluation/ed_scaling_CENSUS.pdf}
-%    \caption{Edit Distance scaling of the \emph{CENSUS} dataset}
-%    \label{fig:eval:ed_CENSUS}
-%\end{figure}
-%\begin{figure}[t]
-%    \centering
-%    \includegraphics[width=\columnwidth]{figures/evaluation/ed_scaling_explanation_CENSUS.pdf}
-%    \caption{Index Matches for the \emph{CENSUS} dataset with increasing edit distance}
-%    \label{fig:eval:ed_explain_CENSUS}
-%\end{figure}
 
 \begin{figure}
     \centering
@@ -383,13 +222,6 @@ The results for the \emph{WIKIPEDIA} dataset are on the right-hand side of Figur
 As before, we plot the runtime and the number of valid sINDs, here in a logarithmic scale to better show the differences in runtime.
 \sawfish's runtime increases significantly for lower edit distance thresholds and reaches it peak at $\tau = 3$.
 Afterward, it decreases slightly for larger edit distance thresholds, while the result set size stays almost constant.
-%The runtime doubles between $\tau = 0$ at 26 seconds to 65 seconds at $\tau = 1$.
-%At $\tau = 2$, it increases to \num{2046} seconds (about 34~minutes).
-%\sawfish's runtime peaks at $\tau = 3$ with \num{18570} seconds, i.e., 5~hours and 10~minutes.
-%Afterwards, it decreases for $\tau = 4, 5, 6$.
-%\sawfish needs around 4~hours and 30~minutes to discover all sINDs with an edit distance threshold $\tau=6$.
-%The result set size increases over the entire experiment.
-%However, while we observe a plateau for $\tau$ $4 \to 6$, there are jumps for $\tau$ $0 \to 1$ and $3 \to 4$.
 
 To investigate both the stark increase and the following decrease in runtime, we regard the index matches once again.
 We use linear scaling in Figure~\ref{fig:eval:ed_explanation} to better visualize the similarity of the lines.
@@ -406,19 +238,6 @@ This trend of earlier validation continues for $\tau = 5$ and $\tau = 6$.
 It also indicates that the number of coincidental matches does not increase significantly.
 As explained for the \emph{CENSUS} dataset, the number of index matches decreases over-proportionally to the decrease in runtime, because each individual edit distance computation takes longer.
 
-%\begin{figure}[t]
-%    \centering
-%    \includegraphics[width=\columnwidth]{figures/evaluation/ed_scaling_WIKIPEDIA.pdf}
-%    \caption{Edit Distance of the \emph{WIKIPEDIA} dataset}
-%    \label{fig:eval:ed_WIKIPEDIA}
-%\end{figure}
-%
-%\begin{figure}[t]
-%    \centering
-%    \includegraphics[width=\columnwidth]{figures/evaluation/ed_scaling_explanation_WIKIPEDIA.pdf}
-%    \caption{Index Matches for the \emph{WIKIPEDIA} dataset with increasing edit distance}
-%    \label{fig:eval:ed_explain_WIKIPEDIA}
-%\end{figure}
 
 In conclusion, \sawfish is able to discover sINDs also for higher edit distance thresholds.
 However, the runtime is dependent on the internal structure of the dataset, namely the number of valid sINDs and the number of coincidental index matches.
@@ -428,11 +247,8 @@ We investigate the effect of different similarity thresholds $\delta$ on the \em
 We focus on this dataset, because it contains strings with varying token counts; thus the difference for different thresholds is more noticeable.
 
 Figure~\ref{fig:eval:jac_sim_scalability} shows the runtime and the result set size for different $\delta$, ranging from $0.1$ to $1.0$.
-%Interestingly, the runtime spikes for $\delta = 0.2$ and $\delta = 0.3$.
-%This spike is not correlated to the drop in the number of found sINDs between $\delta = 0.5 \to 0.6$, but rather related.
 The reason for the drop in sINDs between $\delta = 0.5 \to 0.6$ is the content of the discovered sINDs.
 For $\delta \leq 0.5$, we find matches between single token and two token strings that form the extra sINDs.
-%However, these matches are no longer valid for $delta > 0.5$.
 
 The runtime behavior is related to the validation characteristics, especially for values with more tokens.
 For $\delta = 0.1$, for every string we need at most two matching tokens to validate the similarity, because we limit the number of tokens to 10.
@@ -443,7 +259,7 @@ Nonetheless, the runtime converges.
 This behavior is different from the edit distance case, because we discover fewer sINDs overall, but also the number of coincidental matches is lower.
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=.55\textwidth]{figures/sim_scaling_TPCH_token.pdf}
+    \includegraphics[width=.55\textwidth]{figures/jac_scaling.pdf}
     \caption{Jaccard similarity scalability on the \emph{TPC-H} dataset}
     \label{fig:eval:jac_sim_scalability}
 \end{figure}
@@ -470,23 +286,14 @@ Larger dependent columns and valid dependencies need more time to validate.
 The scaling behavior is more interesting.
 While the runtime for valid dependencies continuously increases for larger dependent columns, the scaling is not clear for invalid dependencies.
 This is because \sawfish needs to find a dependent value for which no similar referenced value exists.
-%Since the candidates passed the preprocessing filter, they might form a valid sIND.
 Therefore, the runtime for invalid dependencies is dependent on the position of the counterexample in the dependent column and thus almost random.
 This behavior can be observed especially for larger invalid dependencies, where the position differences between counterexamples are more noticeable.
 
 \subsection{Comparison to Related Work}
 
-%This section compares \sawfish to the competitors that we introduced above.
-%We use all datasets to compare the three different approaches.
 The experiments in this section compare \sawfish with the baselines using all datasets.
-%For every dataset, we use a memory limit of 4~GB.
-%For the \emph{IMDB} dataset, we used 32~GB as a memory limit, so all algorithms can process it.
-%, which is about 2x the size of our largest dataset. 
-%Since the baseline needs to operate entirely in main memory, we need to set a high memory limit.
-%Still, the baseline was not able to process the \emph{IMDB} dataset within these memory requirements, so we exclude it from the evaluation of this dataset.
 
 \paragraph{Edit Distance Mode}
-%First, we evaluate the different algorithms when choosing the edit distance as similarity measure.
 The following experiment compares the runtimes for an edit distance threshold $\tau = 0$. In this setting, all performance results are comparable since all algorithms discover traditional INDs.
 The left-hand side of Figure~\ref{fig:eval:comparsion_ed} shows the results for all datasets, scaled per dataset to the longest running algorithm.
 Interestingly, for the CENSUS dataset, our naive baseline is the fastest algorithm, while \algorithmName{Binder} needs the most time to complete the search.
@@ -497,13 +304,13 @@ Nonetheless, \sawfish is relatively close to the runtime of the baseline.
     \centering
     \begin{subfigure}[b]{\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/competitor_bars.pdf}
+        \includegraphics[width=\textwidth]{figures/competitor_ed.pdf}
         \caption{$ED$ mode}
         \label{fig:eval:comparsion_ed}
     \end{subfigure}\\
     \begin{subfigure}[b]{\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/competitor_bars_token.pdf}
+        \includegraphics[width=\textwidth]{figures/competitor_jac.pdf}
         \caption{$JAC$ mode}
         \label{fig:eval:comparison_jac}
     \end{subfigure}
@@ -512,11 +319,7 @@ Nonetheless, \sawfish is relatively close to the runtime of the baseline.
 
 For the \emph{WIKIPEDIA}, the \emph{TPC-H} and the \emph{IMDB} datasets, \sawfish's preprocessing combined with the improved index access pattern improves the performance over the baseline.
 \algorithmName{Binder} is the slowest in this experiment, because the two other algorithms can operate entirely in main memory if the entire dataset fits.
-\algorithmName{Binder} eagerly writes every bucket to disk after preprocessing, because it anticipates larger dataset sizes. % and decreases implementation complexity by always writing to disk.
-%The results of the \emph{IMDB} dataset show \algorithmName{Binder}'s specialization in discovering traditional INDs from large datasets.
-%\sawfish's runtime is more than twice that of \algorithmName{Binder}.
-%In particular, this shows the effectiveness of \algorithmName{Binder}'s approach for discovering INDs, e.g., discovering multiple INDs at once, as explained in Section~\ref{section:related_work2}. The baseline 
-%cannot process the dataset, because it exceeds our memory limit.
+\algorithmName{Binder} eagerly writes every bucket to disk after preprocessing, because it anticipates larger dataset sizes.
 
 Next, we set $\tau=1$, i.e., allow sINDs with an edit distance of up to 1 for each value.
 We present them on the right-hand side of Figure~~\ref{fig:eval:comparsion_ed}.
@@ -528,7 +331,6 @@ The runtime of \sawfish is about one third of the baseline's runtime.
 This visualizes the improvements that we accomplish by modifying \algorithmName{PassJoin}'s approach.
 The effect is even larger in the \emph{WIKIPEDIA} dataset:
 \sawfish outperforms the baseline by a factor of around~6.5. 
-%and is in fact close to the runtime of \algorithmName{Binder}.
 \sawfish was not able to discover all sINDs for the \emph{IMDB} dataset, as it exceeded the time limit of 24~hours.
 This emphasizes the difficulty of sIND discovery, because \sawfish discovered all INDs (without allowing similarity) in around 6~minutes.
 We discuss ideas to improve the validation speed in Section~\ref{section:discussion}.
@@ -536,24 +338,17 @@ We discuss ideas to improve the validation speed in Section~\ref{section:discuss
 Our results show that \sawfish can efficiently discover sINDs for reasonably large datasets.
 While the sIND discovery is a hard problem, \sawfish manages to process some datasets in a comparable time to the IND discovery.
 For all larger datasets, \sawfish outperforms the baseline.
-%However, we also observe \sawfish's weaknesses in the \emph{IMDB} dataset.
 
 \paragraph{Jaccard Similarity Mode}
-%Second, we compare the runtime of \sawfish when choosing the Jaccard similarity as similarity measure.
-%Figure~\ref{fig:eval:comparison_jac} shows the results for all four datasets for $\delta = 1.0$ on the left-hand side.
 Figure~\ref{fig:eval:comparison_jac} shows the results for $\delta = 1.0$ on the left-hand side.
-%Thus, all algorithms discover the same traditional INDs.
 \algorithmName{Binder} performs best for the \emph{CENSUS} and the \emph{TPC-H} datasets, while \sawfish performs best on the other two datasets, \emph{WIKIPEDIA} and \emph{IMDB}.
 Besides \algorithmName{Binder}'s algorithmic advantages, the overhead for tokenization inhibits the performance of the other two algorithms.
 While \sawfish and the baseline could have found more dependencies due to the order insensitivity of the Jaccard similarity, we did not observe such effects in our dataset.
 Nonetheless, they have to tokenize each value.
 On the other hand, \sawfish and the baseline can once again operate entirely in main memory.
 Therefore, they gain an advantage in datasets that do not create many tokens per value, e.g., \emph{WIKIPEDIA} and \emph{IMDB}.
-%Thus, \sawfish performs best on these datasets.
 
 For the next experiment, we set $\delta = 0.4$ and show the results on the right-hand side of Figure~\ref{fig:eval:comparison_jac}.
-%This parameter change does not result in different performance characteristics.
-%This parameter change does not change the general performance characteristics.
 In general, the performance characteristics remain similar.
 The gap between \sawfish and \algorithmName{Binder} widens a bit for the \emph{TPC-H} dataset, while it closes a bit for the \emph{WIKIPEDIA} dataset. 
 For the \emph{IMDB} dataset, \sawfish and the baseline improve their runtime, because they can validate string pairs of traditional INDs earlier due to the lower threshold.
@@ -573,7 +368,6 @@ We omit numeric columns to visualize the results better.
 \sawfish runs in $ED$ mode, because we find more and also more interesting results.
 
 In total, we observe \num{1044} sINDs that consist only of strings and are not traditional INDs, i.e., the dependent column contains at least one value for which only a similar value can be found in the referenced column.
-%Some of these sINDs are purely coincidental.
 
 We manually annotated the sINDs to assess their genuineness.
 Overall, we found 161~(15\%) meaningful sINDs, while 671~(64\%) sINDs are coincidental.
@@ -590,9 +384,7 @@ First, the maximum number of characters of any value of the dependent side is ab
 Second, the portion of dependent values that match only similarly to a value on the referenced side is below 30\%.
 Given these two filters, the number of coincidental sINDs is reduced by 638 to 33~(20\%). 
 The number of meaningful sINDs that fulfill these criteria is 101~(64\%).
-%Therefore, we discover this sIND.
 
-%Nevertheless, we also discover meaningful sINDs.
 To exemplify the discovered sINDs, we showcase some meaningful sINDs.
 For example, there is an sIND between the data type column of an API description and the data type column of the input parameters of a program.
 While, one column uses the uppercase versions, such as \data{Float} and \data{String}, the other column uses the lowercase versions, such as \data{float} and \data{string}.
@@ -603,9 +395,6 @@ We present another example of a meaningful sIND in Table~\ref{table:eval:best_ma
 There are multiple tables inside the sample that contain data about college athletes.
 Typically, students are classified into four categories: freshman, sophomore, junior, and senior -- multiple columns contain abbreviations of these categories.
 However, as the table shows, they do not match perfectly, so they do not form a traditional IND.
-%The Virginia Commonwealth University (VCU) uses an uppercase first letter, followed by a lower case letter.
-%By contrast, the CFB stats for the Tulsa Golden Hurricane (CFB) use uppercase letters only.
-%The last variation of the NCAA Baseball stats (NCAA) is to append a point to the VCU style abbreviations.
 Interestingly, we only discover the sINDs \mbox{\emph{VCU} $\simIND{}$ \emph{CFB}} and \mbox{\emph{VCU} $\simIND{}$ \emph{NCAA}} (and their symmetric partners).
 To also discover \mbox{\emph{CFB} $\simIND{}$ \emph{NCAA}}, we need to increase the edit distance threshold to~2.
 Nevertheless, all of this data belongs to the same domain.
@@ -625,8 +414,3 @@ Sr    			& SR          					& Sr.    		\\
 \bottomrule
 \end{tabular}
 \end{table}
-% While many sINDs within the \emph{WTC} were coincidental, there also are multiple valid examples.
-% These show the benefits of allowing similar values, because otherwise these dependencies would go unnoticed.
-% Furthermore, we have to consider that this experiment is conducted on a subset of 200 million web tables.
-% If \sawfish ran on a more homogenous dataset, we expect a lower number of random sINDs.
-% Nevertheless, we could show that our results can indeed indicate joinability.

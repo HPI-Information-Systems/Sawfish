@@ -91,6 +91,7 @@
 
 \usepackage[
 style=ACM-Reference-Format,
+citestyle=acmnumeric,
 backend=biber,
 maxcitenames=1, %% set number of cited authors to one
 ]{biblatex}
@@ -173,29 +174,15 @@ maxcitenames=1, %% set number of cited authors to one
 %% article.
 \begin{abstract}
 Inclusion dependencies (INDs) are a well-known type of data dependency, specifying that the values of one column are contained in those of another column. INDs can be used for various purposes, such as foreign-key candidate selection or join partner discovery.
-%However, they strictly rely on clean data.
 The traditional notion of INDs is based on clean data, where the dependencies hold without exceptions.
-%Nevertheless, the general rise in the amount of data leads to a rise in the amount of erroneous data.
-%Thus, we need to adapt the traditional data dependencies.
-%There already exist relaxations for data dependencies.
 Unfortunately, data often contain errors, preventing otherwise valid INDs from being discovered. A typical response to this problem is to relax the dependency definition using a similarity measure to account for 
-%For example, matching dependencies relax traditional functional dependencies with a similarity measure to handle 
 minor data errors, such as typos or different formatting. While this relaxation is known for functional dependencies, for inclusion dependencies no such relaxation has been defined.
-%Nonetheless, similarity measures have proven to be capable of handling dirty data.
-%There are other known extensions to inclusion dependencies, but none use similarity measures.
 
 We formally introduce \emph{similarity inclusion dependencies}, which relax the inclusion by demanding the existence only of sufficiently similar values.
-%Like matching dependencies, they extend inclusion dependencies with a similarity measure.
 Similarity inclusion dependencies can fulfill traditional IND use cases, such as foreign-key candidate discovery, even in the presence of dirty data. 
-%First, we provide a formal definition for similarity inclusion dependencies.
 We present \sawfish, the first algorithm to discover all similarity inclusion dependencies in a given dataset efficiently.
 Our algorithm combines approaches for the discovery of traditional INDs and string similarity joins with a novel sliding-window approach and lazy candidate validation.
-%Additionally, we validate candidates lazily to reduce the memory requirement and the runtime.
-%
 Our experimental evaluation shows that \sawfish can outperform a baseline by a factor of up to~6.5.
-%We also describe a use case where the discovered similarity inclusion dependencies indicate the joinability of the data.
-%We also investigate scalability and examine the semantics of the discovered dependencies.
-%Finally, we point to examples where the discovered similarity inclusion dependencies indicate the joinability of the data.
 \end{abstract}
 
 %%

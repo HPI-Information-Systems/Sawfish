@@ -1,10 +1,6 @@
-%\section{Similarity Inclusion Dependency Definition}
 \section{Similarity Inclusion Dependency}
 \label{section:background}
 
-%We introduce similarity inclusion dependencies~(sINDs), which generalize the concept of inclusion dependencies~(INDs) using a similarity measure.
-%To present the formal definition of sINDs, we first define traditional unary INDs, i.e., INDs between single columns.
-%Since we want to discover only unary sINDs, we present the unary definitions. 
 
 Let $R$ and $S$ be two relations of a database $D$ (with an instance $I$), and let $\mathtt{A}$ and $\mathtt{B}$ be two attributes.
 The notations $R[\mathtt{A}]$ and $S[\mathtt{B}]$ indicate the projections of $R$ and $S$ on $\mathtt{A}$ and $\mathtt{B}$ respectively.
@@ -23,15 +19,11 @@ An sIND $R[\mathtt{A}] \simIND{\sigma} S[\mathtt{B}]$ can be defined as follows:
 In simpler terms, for each dependent value exists a \emph{similar} referenced value given the similarity measure~$\sigma$ and some threshold.
 
 We can identify trivial sINDs that correspond to trivial INDs.
-%Unary sINDs are a subset of all sINDs where $|A| = |B| = 1$. 
-%Furthermore, we can identify trivial sINDs.
 First, an empty column references every other column.
-%This follows from the definition of sINDs.
 Since there exist no values on the dependent side, every statement using the universal quantifier is trivially true.
 Second, every column trivially references itself: $R[\mathtt{A}] \simIND{\sigma} R[\mathtt{A}]$ always holds.
 Thus, we ignore such reflexive sIND candidates. 
 Like in traditional IND discovery, we also ignore \code{null} values~\cite{papenbrock2015divide}, i.e., in the presence of a null value in the dependent column, we do not demand a null value or a value similar to null in the referenced column.
-%Since we only compare sets of values, we simply eliminate them from all sets.
 
 \sawfish supports both edit-based and token-based similarity measures.
 As a prominent representative of edit-based similarity measures, we explore the Levenshtein distance.
@@ -45,30 +37,8 @@ Each value with $\leq \tau$ characters is similar to every other value with $\le
 Therefore, all pairwise columns that contain only values with $\leq \tau$ characters automatically form sINDs.
 However, these sINDs do not have any meaning other than that the columns contain only short strings.
 We call these sINDs \emph{simple} sINDs and exclude them from our analysis.
-% There are multiple reasons for this choice of similarity measure.
-%First, this metric is easy to understand, so users can easily spot the errors in the data.
-%Second, it accounts for typical errors in dirty data, such as typos or formatting errors.
-%Third, the edit distance is well-studied and there are multiple reference implementations.
-%Fourth, sINDs focus primarily on columns containing shorter values.
-%We do not expect interesting inclusion dependencies among very long values, e.g., abstracts of scientific papers, for which token-based similarity measures would be more appropriate.
-%In fact, we limit the number of characters per value to 50 and ignore any column that includes such a long value.
-%This reduces the memory footprint of the edit distance computation significantly, since it grows quadratically with the length of the values.
-%Moreover, there is often a column, which uniquely identifies the long record for joinability, so our use case does not depend on discovering an sIND on a column containing long values.
-%Due to the shorter value length, the number of tokens per value will be small and token-based similarity measures would classify too many values as dissimilar.
-%In conclusion, the edit distance is a good choice for \sawfish, but the general concept of sINDs supports arbitrary similarity measures.
-%Since we focus on the Levenshtein distance as our similarity measure, we omit the $\sigma$ from our notation and use $R[A] \simIND{} S[B]$ from now on.
 
-%This work aims at efficiently finding all sINDs in a given dataset. 
-%However, since the problem is highly complex, we make certain assumptions to increase the feasibility of discovering sINDs.
-%First, we focus on finding unary sINDs.
-%Thus, we do not have to deal with an exponential number of candidate sINDs.
-%Second, we choose to use the Levenshtein distance with a user-defined $\tau$ as the similarity measure.
-%Third, columns that contain at least one value that is longer than 50 characters are discarded.
-%Since most INDs are found in shorter columns, we do not expect to miss any interesting sINDs.
-%However, the edit distance computation is highly dependent on the length of the input value.
-%Therefore, restricting the maximum length of values helps reduce the memory footprint.
 
-%\subsection{Normalized ED Support}
 
 Besides supporting the absolute edit distance ($ED$), \sawfish can also be used with a normalized edit distance ($NED$) threshold $\delta$.
 The normalized edit distance is defined as follows:
@@ -101,23 +71,8 @@ In this work, we tokenize strings by splitting them up at their whitespaces.
 There are no simple sINDs for the Jaccard similarity, because it is a relative similarity measure.
 
 Lastly, we do not expect interesting or meaningful inclusion dependencies among very long values, e.g., abstracts of scientific papers, because we are not typically joining over those columns.
-%Moreover, oftentimes there is a \enquote{surrogate} column that can be used for joining.
-%In our example of paper abstracts, we could use the title as a suitable surrogate.
-%Therefore, we limit the number of characters per value to 50 and the number of tokens per value to 10.
-%Therefore, we ignore columns that include a value that consists of more than 50 characters or 10 tokens.
 Therefore, we ignore columns that include any value with more than 50 characters or 10 tokens.
-%Additionally, this reduces the memory footprint of the edit distance computation significantly, since it grows quadratically with the length of the values.
-
-%In general, \sawfish is able to process arbitrary string lengths with arbitrary edit distance thresholds.
 
 
-%Index Equation
-%\begin{equation*}
-%    hybrid (x, \delta, max) = 
-%    \begin{cases}
-%        1 & \text{if } \lfloor\dfrac{|x|}{\delta}\rfloor * (1 - \delta) \leq 1 \\
-%        \lfloor\dfrac{|x|}{\delta}\rfloor - |x| & \text{if } \dfrac{|x|}{\delta} \leq max \\
-%        max \cdot (1 - \delta) & \text{otherwise}
-%    \end{cases}
-%\end{equation*}
+
 

@@ -1,18 +1,12 @@
-import pandas
-import sys
-import os
-import matplotlib
-from matplotlib import cm
-import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap, LinearSegmentedColormap
-import random
-import pathlib
-import re
-import statistics
 import csv
 import json
-import matplotlib.patches as mpatches
+import pathlib
+
+import matplotlib
 import matplotlib.lines as mlines
+import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
+import pandas
 
 matplotlib.rcParams['font.family'] = "serif"
 matplotlib.rcParams['font.size'] = "10"

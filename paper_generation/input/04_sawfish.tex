@@ -1,19 +1,9 @@
 \section{The \sawfish Algorithm}
 \label{section:sind}
 
-% Our approach, \sawfish (\emph{\textbf{S}imilarity \textbf{AW}are \textbf{F}inder of \textbf{I}nclusion dependencies via a \textbf{S}egmented \textbf{H}ash-index}), efficiently discovers sINDs in two phases.
-% In the first phase, it preprocesses the dataset to transform the data into the desired format and generates some metadata.
-% It creates a map of data buckets that holds all of our transformed data.
-% Moreover, it generates the sIND candidates that need to be validated in the following step.
-% In the second phase, it performs the actual sIND discovery based on the previously generated candidates.
-% The centerpiece of the discovery is an inverted index, which is used to identify possibly similar strings.
-% Additionally, we devise a method to efficiently validate individual dependent values.
-% We show how we generate substrings that are used to probe the inverted index, and how we modify the known dynamic programming approach to compute the edit distance for our use case.
-% Finally, we show how we compose our approach from these components.
 
 
 \sawfish stands for \textbf{S}imilarity \textbf{AW}are \textbf{F}inder of \textbf{I}nclusion dependencies via a \textbf{S}egmented \textbf{H}ash-index. 
-%It efficiently validates the dependent values by generating substrings, probing an inverted index, and using a dynamic programming approach to compute edit distances.
 \sawfish preprocesses the dataset, generates some metadata, and marks the sIND candidates requiring validation. Then, it performs the actual sIND discovery using an inverted index, which is used to identify possibly similar strings.
 We illustrate the discovery process by following the example from Table~\ref{table:example}.
 We use the $ED$ mode of \sawfish and set an edit distance threshold $\tau = 1$.
@@ -25,27 +15,9 @@ This property allows the creation of an inverted index, where substrings point t
 If two values do not share a substring, they must be dissimilar according to the similarity measure.
 Thereby, \sawfish can avoid validating dissimilar string pairs. 
 Other similarity measures that fulfill these properties include the Hamming distance, the Cosine similarity, and the Dice similarity.
-%
-%To efficiently validate the sIND candidates, we need to introduce another constraint of \sawfish{}.
-%It requires that each column alone fits into main memory.
-%This requirement is necessary, because we need to store an index of a column in main memory.
-%It is not possible to split the index without introducing runtime and complexity overhead.
-%
-%We want to discover all sINDs within the dataset and use an edit distance threshold $\tau$ of $1$.
 
 \subsection{Preprocessing}
 \label{section:sawfish:preprocessing}
-%\sawfish requires the input data to be in a particular format, and it requires additional metadata. %about the input data.
-%This routine differs only in the used lengths for each string when discovering sINDs based on $ED$ or $JAC$.
-%For the $ED$ case, we use the number of characters of an input string, while we use the number of tokens of an input string in the $JAC$ case.
-%First, we group all distinct values by their length for each column.
-%Table~\ref{table:impl:preprocessing} illustrates the resulting structure for our example relations and the $ED$ case.
-%There is a \enquote{bucket} for each length per column.
-%As explained in Section \ref{section:related:ind}, this input handling shares some ideas with the approach of \algorithmName{Binder}.
-%Furthermore, we ignore any column containing at least one value with more than  50~characters or more than 10~tokens---we discard all buckets of that column. %and also ignore further values.
-%While reading the input, we can piggyback the creation of metadata.
-%During the input reading, we can create the required metadata.
-%We maintain the minimum and the maximum length of all values for each column.
 We transform the input into a particular data format and extract additional metadata.
 First, we group all distinct values of each column by their lengths.
 Here, length is the number of characters of the
@@ -55,11 +27,8 @@ The right-hand side of the figure visualizes the sliding length window that will
 We can discard any column containing at least one value with more than fifty characters or more than ten tokens.
 During input reading, we collect the minimum and maximum length of all values for each column.
 
-%While transforming the input data, we might hit the limit of our allocated main memory.
-%To perform our preprocessing without requiring that an entire table fits into the main memory, we can evict buckets and write them to disk.
 To preprocess the data without requiring entire tables to fit into main memory, we can evict buckets by writing them to disk.
 The memory check occurs after reading a configurable number of values, which defaults to~100.
-%The largest buckets are written to disk if the main memory is exhausted, until we fall below the memory limit.
 If we need to free memory, we first identify the largest column.
 Therefore, we obtain the column sizes of the preprocessing routine and compare them against each other.
 We evict the largest column first because we free most of the memory with minimal disk I/O.
@@ -92,11 +61,10 @@ length  & name              & club              & 11 & 12 & 13 & 14    \\
 \label{fig:impl:length_window}
 \end{figure}
 
-%The last step of preprocessing concerns the sIND candidate generation.
 There are up to $n^2$ unary sIND candidates.
 However, we can prune some candidates based on the collected metadata.
 First, we prune trivial sINDs, e.g., reflexive sINDs and sINDs with empty columns.
-Second, we prune the simple sINDs in the $ED$ case, i.e., sINDs where both columns contain only values smaller than $\tau$ characters. %, that we introduced in Section \ref{section:background}. 
+Second, we prune the simple sINDs in the $ED$ case, i.e., sINDs where both columns contain only values smaller than $\tau$ characters.
 Third, we prune sIND candidates that cannot hold due to their length difference.
 In the $ED$ case, the maximum length difference between two similar strings is $\tau$, because we can only perform $\tau$ insert or delete operations.
 Therefore, we can prune any candidate where the longest value of the dependent column is longer than the longest value of the referenced column plus $\tau$.
@@ -104,7 +72,6 @@ Similarly, we can prune any candidate, where the shortest value of the dependent
 In the $JAC$ case, any value $x$ can only be similar to values $y$ where $|x| \cdot \delta \leq |y| \leq \frac{|x|}{\delta}$.
 Therefore, we can apply a similar pruning for the shortest and longest values of a column.
 We store the remaining candidates by assigning each referenced column all columns that possibly depend on it.
-%The benefit of this order lies in the index build order and is presented in Section~\ref{subsection:sind:combination}.
 
 In our example, we generate two candidate sINDs for $\tau = 1$: \mbox{\emph{results[name]~$\simIND{}$~goalie[club]}} and  \mbox{\emph{goalie[club]~$\simIND{}$~results[name]}}.
 All candidates containing \mbox{\emph{results[points]}} and \mbox{\emph{goalie[p\_id]}} are pruned based on their length difference.
@@ -114,18 +81,11 @@ All candidates containing \mbox{\emph{results[points]}} and \mbox{\emph{goalie[p
 As with the detection of traditional INDs, the general idea of \sawfish is that it is sufficient to find a single counterexample to invalidate an sIND candidate.
 Due to the universal quantifier in the sIND definition, there needs to be at least one similar referenced value for each dependent value.
 However, it is infeasible to directly compare every dependent value to every referenced value.
-To reduce the number of comparisons of string pairs, \sawfish uses an inverted index. %based on the segment filter presented in Section \ref{section:related_work2}.
+To reduce the number of comparisons of string pairs, \sawfish uses an inverted index.
 After building the index for a referenced column, each dependent column is probed against the index.
 For each dependent value that matches an index entry, the similarity of the resulting value pair is validated.
-%The exact edit distance is computed for every value pair that passes the filter to validate their similarity.
 If each dependent value is similar to at least one referenced value, the sIND is emitted as a valid dependency.
 
-%We provide a more detailed view of the individual components in the following sections.
-%First, we introduce the inverted index.
-%Next, we present our method to validate dependent values.
-%This includes the generation of substrings and the index probing routine.
-%Moreover, we show our improved edit distance computation to quickly validate the similarity of string pairs.
-%The final part describes the interaction of the different building blocks.
 
 \subsection{Inverted Index}
 The inverted index is the centerpiece of \sawfish.
@@ -143,14 +103,10 @@ Second, \sawfish obtains the substrings by using the previously generated start 
 It maps each substring to its parent string.
 However, not all substrings are placed on the same map.
 There is a map for each segment position to access the segment sets individually.
-%Moreover, the segments within each map are deduplicated.
 
-%To visualize the created index, we perform the described procedure with the \emph{name} column of our example.
 Table~\ref{fig:impl:index} shows the inverted index for the $\mathtt{name}$ column in our example.
 We use $\tau = 1$, so every value is split into two segments.
 The segments within each segment position are deduplicated; thus, for instance, \data{SpVgg} is presented only once.
-%The connection of each segment to its respective value is marked with an arrow.
-%We simplify the visualization by showing the entire index as one instead of dividing it by length.
 
 \begin{table}[ht]
 \centering
@@ -170,52 +126,14 @@ The segments within each segment position are deduplicated; thus, for instance, 
 
 To reduce memory consumption of the inverted index, we employ a technique similar to \code{std::string\_view} of the C++ standard.
 Since all strings and their substrings are immutable in the index, we do not need to copy the characters, but can use a view instead.
-%We implement a custom version, which includes more helper functions.
 
-%\subsubsection{Character Buffer Reusage}
-%\label{subsection:sind:optimizations:buffer}
-%Building inverted indices requires the generation of many substrings.
-%Typically, the \code{substring} method is implemented by copying the characters of the substring and creating a new string.
-%However, since we segment the entire string, we would double the memory consumption.
-%Our use case has two constraints that enable us to improve this consumption.
-%First, the lifetime of the substrings does not exceed the lifetime of their parent strings.
-%Since we need the entire string for the later validation, the substrings within the index are not used longer than their parent string.
-%Hence, there are no \enquote{orphan} substrings that exist for longer than their parent string.
-%Second, all strings in the entire index are immutable.
-%We do not need to change the strings, neither for the index build nor the validation.
-%There is no need to change the strings for index building or validation.
-%Thus, the substrings still contain the same characters as they have during their creation.
-%Therefore, we implement a new \code{substring} method that reuses the original character buffer.
-%Instead of copying the characters, we create a pointer to the position in the original character buffer where the substring starts.
-%We also save the length of the substring.
-%Since we only operate on strings shorter than 50 characters, we can address every position with a single byte.
-%Moreover, \emph{Java} uses UTF16 and thus requires two bytes for each character in a string.
-%The following equation shows the condition when 
-%Our new \code{substring} method outperforms the traditional technique when $l \geq \tau + 2$:
-%Let $l$ be the length of the string and $\tau$ be the edit distance threshold. 
-%In comparison to doubling the memory consumption for the tradtional method, we need to save the character buffer only once.
-%However, we need two bytes for each segment and two bytes for the entire string to save the pointer and the length of the substring.
-%Then
-%\begin{equation*}
-%    2(2l) \geq 2l + 2 + 2(\tau + 1)  \iff l \geq \tau + 2
-%\end{equation*}
-%We save on memory as long as the string is more than one character longer than our edit distance threshold.
-%Since most strings are longer than this threshold, we consume less memory overall.
-%Runtime is also decreased because there is no need to copy characters to create a substring. 
-%As opposed to other forms of managing strings, such as run-length encoding, the operations on the substrings that were created using our method are not affected.
-%Since they operate entirely on the underlying character buffer, there is no difference in the execution behavior.
 
 \paragraph{Sliding Length Window}
 \label{subsection:sind:optimizations:length}
-Based on the intuition of the length filter, we only need to compare a dependent value $y$ to the index values within a certain interval. %$[|y| - \tau, |y| + \tau]$.
+Based on the intuition of the length filter, we only need to compare a dependent value $y$ to the index values within a certain interval.
 We do not use the entire index; instead, we only use the index blocks required to validate the current dependent values.
 We can iterate the dataset length-wise and build new indices only on-demand while removing unused indices.
 This technique resembles a sliding window through the occurring lengths of the dataset, as illustrated on the right-hand side of Figure~\ref{fig:impl:length_window}.
-%Thus, we called this optimization \emph{sliding length window}.
-%Figure~\ref{fig:impl:length_window} illustrates this technique.
-%The values that are currently validated and indexed are highlighted in yellow, the additional indexed values are marked in light green, and unused values are greyed out.
-%The currently processed values are highlighted in yellow.
-%Additionally, the values that are currently indexed are marked in light green, while unused lengths are greyed out.
 
 We take advantage of the length buckets from preprocessing to iterate value lengths.
 We iterate from the longest to the shortest length because we expect fewer accidental matches for longer strings.
@@ -229,15 +147,9 @@ We loop until all lengths are processed, or there are no dependent candidates fo
 There are two main advantages of the \emph{sliding length window}.
 First, there is no need to build the entire index if a column is no longer referenced by any other column.
 Therefore, we can abort the execution early.
-%Even if another column of the current column batch needs further process, we can at least avoid the index building for the column that is no longer referenced.
 Second, the indices in the main memory are smaller, so they are more likely to fit into the cache lines and can be accessed faster.
 
 \subsection{Dependent Value Validation}
-%While the inverted index is the central component in \sawfish{}, we need to devise techniques to access it efficiently.
-%We present our approach to validate the individual values from the dependent columns of candidate sINDs in this section.
-%First, we show how to generate the necessary substrings that are compatible with the inverted index.
-%Next, we devise a new method to efficiently access the inverted index for our use case.
-%Finally, we demonstrate how to use the insights of the inverted index to improve the similarity computation. 
 This section presents our approach to validating the individual values from the dependent columns of candidate sINDs.
 This phase shows the largest difference between the $ED$ and $JAC$ modes.
 
@@ -245,8 +157,6 @@ This phase shows the largest difference between the $ED$ and $JAC$ modes.
 To validate values in $ED$ mode, we show how to generate substrings compatible with the inverted index. Then, we describe our method for efficiently using the inverted index in our use case. Also, we demonstrate how to use the inverted index to speed up similarity computation. 
 
 \paragraph{Substring Generation}
-%\label{subsection:impl:substring}
-%As we explained in Section \ref{section:related_work2}, 
 If two strings $x$ and $y$ are similar, at least one substring of $y$ matches a segment of $x$.
 Since we created the inverted index based on the segments, we need to generate all substrings that can match a segment.
 However, we do not want to probe the index for all substrings of~$y$.
@@ -260,11 +170,6 @@ Any string $y$ can be similar to a string $x$, only if $|y| - \tau \leq |x| \leq
 Therefore, we need to compute the substrings for every length in $[|y| - \tau, |y| + \tau]$.
 Due to these different target lengths, also the inverted index is divided into the different lengths of its values.
 
-%While it would be possible to store the substrings in the index and probe this index using the segments, this would lead to larger index sizes.
-%First, there can be multiple substrings for each segment position.
-%Therefore, we generate more substrings than segments.
-%Second, we have to generate the substrings for multiple target lengths.
-%Thus, we create the substrings $2\tau + 1$ times.
 
 \paragraph{Index Probing}
 We need the generated substrings and their respective target length to probe the inverted index.
@@ -272,7 +177,7 @@ Therefore, we iterate all possible length differences \textit{ld}.
 For each target length, we first generate the substrings.
 Then we select the correct index for the target length.
 Finally, each substring for the $i$-th segment position is compared to the $i$-th segments of the selected index.
-If we find matching pairs of substring and segment for position $i$, we validate their actual similarity, as we describe in the next paragraph. % Section~\ref{subsection:impl:edit_distance_dp}. 
+If we find matching pairs of substring and segment for position $i$, we validate their actual similarity, as we describe in the next paragraph.
 Either one of the matches is similar to the dependent value, or we continue with checking the $i+1$-th segment.
 To not process a referenced value multiple times, we keep a set of already validated values.
 Algorithm~\ref{alg:deduplication} shows the entire function.
@@ -321,8 +226,6 @@ Therefore, we reduce the number of unnecessary index accesses by validating the 
 \label{subsection:impl:edit_distance_dp}
 After obtaining possibly similar string pairs from the inverted index, we validate their similarity by computing their exact edit distance.
 There is a well-known dynamic programming-based algorithm to calculate edit distances~\cite{wagner1974string}.
-%However, we do not need to compute all matrix entries. 
-%\citeauthor{PassJoin} showed how to improve this because of two crucial advantages~\cite{PassJoin}.
 However, it is possible to use a technique from \citeauthor{PassJoin} to improve this algorithm by avoiding computing all matrix entries~\cite{PassJoin}.
 First, we are only interested in whether two strings are similar.
 Thus, we can abort the computation if we cannot obtain an edit distance below $\tau$.
@@ -370,7 +273,7 @@ Algorithm~\ref{alg:scancount} shows the procedure in detail.
 
 
 
-\subsection{sIND Discovery}%Putting the Building Blocks Together}
+\subsection{sIND Discovery}
 \label{subsection:sind:combination}
 
 \sawfish combines the building blocks above --
@@ -380,7 +283,6 @@ This approach explains the order in which we store the \textit{candidates} in pr
 It allows us to build the index only once and go through all possible dependent columns without rebuilding it.
 We probe the inverted index for each dependent value and save the matches.
 However, if we do not find a single match for all substrings, we can directly discard the sIND candidate because we only need one counterexample. 
-%to an sIND candidate, we can directly prune the candidate.
 Otherwise, we validate the individual matches using the similarity measure.
 If one of the matches is indeed similar to the dependent value, we can jump to the next dependent value.
 Otherwise, we also can discard the candidate.
@@ -391,10 +293,8 @@ While there might be situations where only one index fits into main memory, for 
 Since we require the largest index to fit into the main memory, smaller indexes can coexist in the main memory.
 Therefore, we can build the inverted index for multiple columns at once, enabling us to use the available memory better.
 Moreover, since the columns of the indices might depend on each other, we do not need to load them into main memory just for validating the values, but we can also build the index for them.  
-%However, we have to decide which indices fit into main memory together.
 Nonetheless, we still need to decide which indices to fit into the main memory and model the decision after the bin packing problem.
 
-%Deciding which columns should be used for each iteration is similar to the bin packing problem.
 The bin packing problem is NP-hard~\cite{MARTELLO199059}.
 However, there exist multiple approximation techniques.
 The First Fit Decreasing (FFD) algorithm works by first sorting the integers (here: index sizes) and then selecting fitting elements.
@@ -402,9 +302,6 @@ The First Fit Decreasing (FFD) algorithm works by first sorting the integers (he
 We use FFD to select the columns that we process in each iteration.
 Thus, our column batching selection method works well because even in the worst-case scenario, our algorithm needs to run only slightly more often than in an optimal case.
 
-%While we could try to combine the column batching with the sliding length window approach, there are two main reasons why we did not implement it.
-%First, it further complicates the selection problem, because we would need to ensure a moving sum of elements is below the bin capacity.
-%Second, there is not a need for this combination, because the validation runtime prohibits the use of datasets that are large enough to benefit from this idea.
 
 \begin{algorithm}
 \caption{Candidate Validation}\label{alg:impl:validation}

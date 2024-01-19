@@ -1,14 +1,14 @@
 #!/bin/bash
 
 scripts=(
-  "alternative_row_plot.py"
-  "column_plot_twoCols.py"
-  "column_plot_twoCols_token.py"
-  "competitors_bar_twoCols.py"
-  "competitors_bar_token_twoCols.py"
-  "ed_explanation_plot_twoCols.py"
-  "ed_plot_twoCols.py"
-  "sim_scaling_plot_token.py"
+  "column_plot_ed.py"
+  "column_plot_jac.py"
+  "competitors_plot_ed.py"
+  "competitors_plot_jac.py"
+  "ed_explanation_plot.py"
+  "ed_scaling_plot.py"
+  "row_plot.py"
+  "jac_scaling_plot.py"
   "valid_sIND_impact_plot.py"
 )
 
