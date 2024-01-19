@@ -7,14 +7,19 @@ The source code and the artifacts required to reproduce the results of the paper
 First, clone the repository on your machine by running:
 `git clone https://github.com/HPI-Information-Systems/Sawfish.git`
 
+The repository uses Git LFS for the datasets. Therefore, ensure that you have installed Git LFS. You can download it [here](https://git-lfs.com/).
+
+You can ensure, that the LFS file has been downloaded, by checking if `datasets/SawfishDatasets.zip` exists. You do not need to extract the ZIP file, this will be handled automatically later.
+
 ## 2. Repository Overview
 
 The structure of the repository is the following:
 
 - The `src/` contains the source code of the Sawfish algorithm, including the algorithm itself (`sawfish/main/java/de/metanome/algorithms/sawfish`) and the tests (`sawfish/test/java/de/metanome/algorithms/mock`)
-- The `docker-compose.yml` contains a list of the docker images that are used to run execute and test the Sawfish algorithm in different ways. 
-- The `data_generation/` folder includes all scripts to generate the input data for the testing
-- The `plot_and_paper_generation/` folder includes all scripts to generate the plots and the resulting paper from the output data
+- The `docker-compose.yml` contains a list of the docker images that are used to execute and test the Sawfish algorithm in different ways.
+- The `datasets/` folder includes the four datasets used to reproduce the results in the paper
+- The `plot_generation/` folder includes all scripts to generate the plots output data
+- The `paper_generation/` folder includes all scripts to generate the final paper based on the results and generated plots. The paper is then created in `final_paper/`
 
 ## 3. Execution
 
@@ -28,29 +33,36 @@ Each method differentiates in the ability to customize the output.
 The Master Script is the least customizable, but with one command, the following things will be done:
 
 1. Install all needed systems (Maven, Metanome, Python)
-2. Fetch all needed input data for Sawfish
-3. Execution of the Sawfish Algorithm for all the input data (Can take <span style="color:red">multiple hours</span> to finish)
+2. Fetch required input data for Sawfish by unzipping `datasets/SawfishDatasets.zip`
+3. Execution of the Sawfish Algorithm for all the input data (Can take up to 24 hours to finish)
 4. Generation of all the plots & graphs that can be found in the paper (After the execution visible in `paper/graphs/` directory)
-5. Full regeneration of the paper with all new statistics, graphs & plots (After the execution visible in `paper/reproduced_paper.pdf`)
+5. Full regeneration of the paper with all new statistics, graphs & plots (After the execution visible in `final_paper/paperSINDsKaminsky.pdf`)
 
-The master script can be executed with the command `docker-compose run sawfish-master`.
+The master script can be executed with the .sh file `master-script.sh`.
+If you are on MacOS or Linux do the following steps:
+
+1. Make the script executable by running: `chmod +x master-script.sh`
+2. Execute `master-script.sh` by running: `sh master-script.sh`
+
+If you are on Windows, do the following steps:
+
+0. Ensure that you are using [Git Bash](https://gitforwindows.org/), [Cygwin](https://www.cygwin.com/) or [Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl/install).
+1. Make the script executable by running:  `chmod +x master-script.sh`
+2. Execute `master-script.sh` by running: `./master-script.sh`
+
 </details>
 
 <details>
-<summary>2. Metanome CLI</summary>
+<summary>2. Run each step seperately</summary>
 </details>
+You can also run each step seperately, with different docker images.
+
+- To extract the datsets, use `docker-compose up sawfish-datasets-extraction`
+- To run all the scripts to generate the results, execute `docker-compose up sawfish-result-generation`
+- After generating the results, you can generate the plots seen in the paper with `docker-compose up sawfish-plot-generation`
+- To generate the final paper with the new plots, execute `docker-compose up sawfish-paper-generation`
+
 <details>
-<summary>3. Metanome UI</summary>
-Metanome is a convenient web platform, that you run locally. It provides a fresh view on data profiling and allows you to execute Sawfish in a more visual way. To use the Metanome UI, follow these instructions:
-
-1. As Sawfish was initially build with the Metanome Web UI, create the main Sawfish image with `docker build -t sawfish .`.
-2. Start a container by running `docker run -d -p 8080:8080 -p 8081:8081 sawfish`.
-3. Now, open `localhost:8080` in your browser. You should now be able to see Metanome.
-4. To get to know how to use Sawfish in Metanome, use the following video as reference:
-
-It is not supported to generate the
-<span style="color:red"> Insert Video here <span>
-</details>
 
 ## 4. Execution Configurations
 
@@ -70,10 +82,3 @@ Other configuration options are listed below:
 - `measureTime`: creates an output file with fine-grained time stats
 - `ignoreNumericColumns`: ignore columns that only contain numeric values
 - `hybridMode`: turns on the hybrid mode of the normalized edit distance computation in SAWFISH
-
-### Changing the input data
-
-To change the input data, use the Metanome CLI or Metanome UI. add `-v path/to/your/data:/app/metanome/backend/WEB-INF/classes/inputData/extern` to your docker run command. E.g.:
-`docker run -d -p 8080:8080 -p 8081:8081 -v /path/to/your/data:/app/metanome/backend/WEB-INF/classes/inputData/extern sawfish`
-
-Remember to replace `path/to/your/data` with your custom path.
