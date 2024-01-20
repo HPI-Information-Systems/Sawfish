@@ -8,4 +8,4 @@ COPY /datasets /datasets
 
 WORKDIR /datasets
 
-CMD unzip -o "SawfishDatasets.zip" && rm "SawfishDatasets.zip"
+CMD unzip -o "SawfishDatasets.zip"
