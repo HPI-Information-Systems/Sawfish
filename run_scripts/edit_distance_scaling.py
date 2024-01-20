@@ -11,6 +11,8 @@ result_dir_path = "/edit_distance"
 results_dir = pathlib.Path(script_path / "../results")
 result_file = pathlib.Path(results_dir / "combined_stats/results_ed.csv").resolve()
 timing_stats_dir = pathlib.Path(results_dir / "timingStats").resolve()
+experiment_id = 803
+num_experiments = 1547
 
 datasets = ["WIKIPEDIA", "CENSUS"]
 
@@ -21,8 +23,6 @@ algorithm = 'de.metanome.algorithms.sawfish.SawfishInterface'
 for ds in datasets:
     for edit_distance in range(2, 7):
         for i in range(3):
-            print(f"{ds} - ED {edit_distance} - run {i}")
-
             output_file = f'"{result_dir_path}/result_{ds}_{edit_distance}_{i}"'
             input_file = f'"{data_path}/{ds}.csv"'
 
@@ -41,6 +41,10 @@ for ds in datasets:
                 f'| tail -n 2'
             )
 
+            print(f"Experiment {experiment_id} / {num_experiments}")
+            experiment_id += 1
+
+            print(f"{ds} - ED {edit_distance} - run {i}")
             output = subprocess.run(command, stdout=subprocess.PIPE, universal_newlines=True, shell=True, cwd=pathlib.Path(script_path / ".."))
             print(output.stdout)
             moveCommand = "mv %s/timingStats.csv %s/timingStats_%s_%s_%s.csv" % (results_dir, timing_stats_dir, ds, str(edit_distance), i)
@@ -59,8 +63,6 @@ for ds in datasets:
 for ds in (datasets + ["TPCH"]):
     for edit_distance in range(2):
         for i in range(3):
-            print(f"{ds} - ED {edit_distance} - run {i}")
-
             output_file = f'"{result_dir_path}/timingStats_{ds}_{edit_distance}_{i}"'
             input_file = f'"{data_path}/{ds}.csv"'
 
@@ -78,6 +80,11 @@ for ds in (datasets + ["TPCH"]):
                 f'--algorithm-config {config} '
                 f'| tail -n 2'
             )
+
+            print(f"Experiment {experiment_id} / {num_experiments}")
+            experiment_id += 1
+
+            print(f"{ds} - ED {edit_distance} - run {i}")
 
             output = subprocess.run(command, stdout=subprocess.PIPE, universal_newlines=True, shell=True, cwd=pathlib.Path(script_path / ".."))
             print(output.stdout)

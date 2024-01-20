@@ -21,8 +21,8 @@ echo --- Starting execution of run_scripts ---
 
 python3 -u /app/run_scripts/column_scaling_ed.py
 python3 -u /app/run_scripts/column_scaling_jac.py
-python3 -u /app/run_scripts/competitors_jac.py
 python3 -u /app/run_scripts/competitors_ed.py
+python3 -u /app/run_scripts/competitors_jac.py
 python3 -u /app/run_scripts/edit_distance_scaling.py
 python3 -u /app/run_scripts/jac_similarity_scaling.py
 python3 -u /app/run_scripts/row_scaling_ed.py

@@ -13,11 +13,12 @@ result_file = pathlib.Path(script_path / "../results/combined_stats/results_ed.c
 datasets = ["CENSUS", "WIKIPEDIA", "TPCH", "IMDB"]
 algorithms = ["de.metanome.algorithms.sawfish.SawfishInterface", "de.metanome.algorithms.sindbaseline.SINDBaseline", "de.metanome.algorithms.binder.BinderFileAlgorithm"]
 classpath = classpath = f'"{metanome_path}/metanome-cli-1.1.1.jar":"{metanome_path}/sawfish-1.1-SNAPSHOT.jar"'
+experiment_id = 701
+num_experiments = 1547
 
 for ds in datasets:
     for algo in algorithms:
             for i in range(0, 3):
-                print(f"DS {ds} - ALG {algo} - ED 0 - run {i}")
 
                 config=""
                 simplified_algo_name=""
@@ -50,6 +51,10 @@ for ds in datasets:
                      f'| tail -n 2'
                 )
 
+                print(f"Experiment {experiment_id} / {num_experiments}")
+                experiment_id += 1
+
+                print(f"DS {ds} - ALG {algo} - ED 0 - run {i}")
                 output = subprocess.run(command, stdout=subprocess.PIPE, universal_newlines=True, shell=True, cwd=pathlib.Path(script_path / ".."))
                 print(output.stdout)
 
@@ -68,8 +73,6 @@ for ds in datasets:
         for algo in algorithms:
                 if algo != "de.metanome.algorithms.binder.BinderFileAlgorithm":
                     for i in range(0, 3):
-                        print(f"DS {ds} - ALG {algo} - ED 1 - run {i}")
-
                         config="editDistanceThreshold:1"
                         simplified_algo_name=""
 
@@ -94,6 +97,10 @@ for ds in datasets:
                             f'--algorithm-config {config} '
                             f'| tail -n 2'
                         )
+                        print("Experiment %s / %s" % (experiment_id, num_experiments))
+                        experiment_id += 1
+
+                        print(f"DS {ds} - ALG {algo} - ED 1 - run {i}")
 
                         output = subprocess.run(command, stdout=subprocess.PIPE, universal_newlines=True, shell=True, cwd=pathlib.Path(script_path / ".."))
                         print(output.stdout)

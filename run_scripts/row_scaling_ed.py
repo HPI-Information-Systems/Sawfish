@@ -1,14 +1,16 @@
 import csv
-import random
 import pathlib
-import subprocess
+import random
 import re
+import subprocess
 
 script_path = pathlib.Path(__file__).parent.resolve()
 data_path = pathlib.Path(script_path / "../datasets/").resolve()
 metanome_path = pathlib.Path(script_path / "../metanome/").resolve()
 sample_path = pathlib.Path(data_path / "current_row_samples.csv").resolve()
 result_dir_path = "/row_scaling_ed"
+experiment_id = 878
+num_experiments = 1547
 
 result_file = pathlib.Path(script_path / "../results/combined_stats/results_ed.csv")
 
@@ -53,7 +55,11 @@ for ds in datasets:
                     f'--header '
                     f'--algorithm-config maxMemoryUsagePercentage:70,editDistanceThreshold:1 '
                     f'| tail -n 2'
-                )                
+                    )
+
+                print(f"Experiment {experiment_id} / {num_experiments}")
+                experiment_id += 1
+
                 output_string = "DS %s - LEN %s - run %s - token False" % (ds, data_point, sample_idx)
                 print(output_string)
                 output = subprocess.run(command, stdout=subprocess.PIPE, universal_newlines=True, shell=True, cwd=pathlib.Path(script_path / ".."))

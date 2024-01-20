@@ -12,6 +12,9 @@ result_dir_path = "/row_scaling_jac"
 
 result_file = pathlib.Path(script_path / "../results/combined_stats/results_jac.csv")
 
+experiment_id = 1148
+num_experiments = 1547
+
 datasets = ["CENSUS", "WIKIPEDIA", "TPCH", "IMDB"]
 number_of_datapoints = 10
 number_of_samples = 10
@@ -54,7 +57,11 @@ for ds in datasets:
                 f'--header '
                 f'--algorithm-config maxMemoryUsagePercentage:70,tokenMode:true,similarityThreshold:0.4 '
                 f'| tail -n 2'
-            )  
+                )
+
+            print(f"Experiment {experiment_id} / {num_experiments}")
+            experiment_id += 1
+
             output_string = "DS %s - LEN %s - run %s - token True" % (ds, data_point, sample_idx)
             print(output_string)
             output = subprocess.run(command, stdout=subprocess.PIPE, universal_newlines=True, shell=True, cwd=pathlib.Path(script_path / ".."))

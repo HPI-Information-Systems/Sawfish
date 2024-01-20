@@ -18,12 +18,14 @@ column_sizes = {datasets[0]: [2, 6, 10, 14, 18, 22, 26, 30, 34, 38], datasets[1]
 column_count = {datasets[0]: 42, datasets[1]: 11, datasets[2]: 55}
 number_of_samples = 30
 column_combinations = {datasets[0]: [], datasets[1]: [], datasets[2]: []}
+experiment_id = 1
+num_experiments = 1547
 
 for ds in datasets:
     for column_size in column_sizes[ds]:
         current_combinations_set = set()
         while len(current_combinations_set) != number_of_samples:
-            if ds == datasets[1] and column_size == 10 and len(current_combinations_set) > 10:
+            if ds == "WIKIPEDIA" and column_size == 10 and len(current_combinations_set) > 10:
                 # Since WIKIPEDIA only has 11 columns, we can not find 30 combinations of size 10
                 break
             current_combination = set()
@@ -82,6 +84,10 @@ for ds in datasets:
                 f'--algorithm-config editDistanceThreshold:1,maxMemoryUsagePercentage:70 '
                 f'| tail -n 2'       
             )
+
+            print(f"Experiment {experiment_id} / {num_experiments}")
+            experiment_id += 1
+
             output_string = "DS %s - LEN %s - run %s" % (ds, len(current_combination), idx)
             print(output_string)
             output = subprocess.run(command, stdout=subprocess.PIPE, universal_newlines=True, shell=True, cwd=pathlib.Path(script_path / ".."))

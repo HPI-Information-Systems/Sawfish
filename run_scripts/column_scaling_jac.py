@@ -20,6 +20,8 @@ column_count = {datasets[0]: 42, datasets[1]: 11, datasets[2]: 55, datasets[3]: 
 number_of_samples = 30
 column_combinations = {datasets[0]: [], datasets[1]: [], datasets[2]: [], datasets[3]: []}
 number_of_process = 8
+experiment_id = 301
+num_experiments = 1547
 
 def write_subparts(data, identifier, current_combination):
     with open(pathlib.Path(data_path / ("current_samples_%s.csv" % identifier)).resolve(), 'w', newline='') as csvfile:
@@ -47,7 +49,7 @@ for ds in datasets:
     for column_size in column_sizes[ds]:
         current_combinations_set = set()
         while len(current_combinations_set) != number_of_samples:
-            if ds == datasets[0] and column_size == 10 and len(current_combinations_set) > 10:
+            if ds == "WIKIPEDIA" and column_size == 10 and len(current_combinations_set) > 10:
                 break
             current_combination = set()
             while len(current_combination) != column_size:
@@ -97,6 +99,10 @@ for ds in datasets:
                 f'--algorithm-config maxMemoryUsagePercentage:70,tokenMode:true,similarityThreshold:0.4 '
                 f'| tail -n 2'
             )
+
+            print(f"Experiment {experiment_id} / {num_experiments}")
+            experiment_id += 1
+
             output_string = "DS %s - LEN %s - run %s" % (ds, len(current_combination), idx)
             print(output_string)
             output = subprocess.run(command, stdout=subprocess.PIPE, universal_newlines=True, shell=True, cwd=pathlib.Path(script_path / ".."))

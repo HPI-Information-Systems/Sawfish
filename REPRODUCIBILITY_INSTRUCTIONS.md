@@ -34,7 +34,7 @@ Each method differentiates in the ability to customize the output.
 The Master Script is the least customizable, but with one command, the following things will be done:
 
 1. Fetch required input data for Sawfish by unzipping `datasets/SawfishDatasets.zip`
-2. Execution of the Sawfish Algorithm for the datasets used in the paper (may take up to 24 hours to finish)
+2. Execution of all experiments for the datasets used in the paper (may take up to a week to finish). A single experiment should take at most around two hours. Since the IMDB dataset consistently timed out in ED mode, we excluded those experiments altogether to save time.
 3. Generation of all the plots & graphs that can be found in the paper (after execution visible in `paper_generation/figures/` directory)
 4. Full compilation of the paper with all new statistics, graphs & plots (after execution visible in `final_paper/paperSINDsKaminsky.pdf`)
 

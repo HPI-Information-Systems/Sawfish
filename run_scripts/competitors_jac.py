@@ -1,16 +1,14 @@
-# --------- PROBABLY NOT USED IN ORIGINAL RESULTS -----------
-
-import csv
-import random
 import pathlib
-import subprocess
 import re
+import subprocess
 
 script_path = pathlib.Path(__file__).parent.resolve()
 data_path = pathlib.Path(script_path / "../datasets/").resolve()
 metanome_path = pathlib.Path(script_path / "../metanome/").resolve()
 result_dir_path = "/related_work"
 result_file = pathlib.Path(script_path / "../results/combined_stats/results_jac.csv").resolve()
+experiment_id = 755
+num_experiments = 1547
 
 datasets = ["CENSUS", "WIKIPEDIA", "TPCH", "IMDB"]
 algorithms=["de.metanome.algorithms.sawfish.SawfishInterface", "de.metanome.algorithms.tokenbaseline.TokenBaseline"]
@@ -21,7 +19,6 @@ for ds in datasets:
     for algorithm in algorithms:
         for sim in [0.4, 1]:
             for i in range(0, 3):
-                print(f"DS {ds} - ALG {algorithm} - SIM {sim} - run {i}")
 
                 config=f"similarityThreshold:{sim}"
                 simplified_algo_name = "BASELINE"
@@ -46,6 +43,11 @@ for ds in datasets:
                     f'--algorithm-config {config} '
                     f'| tail -n 2'
                 )
+
+                print(f"Experiment {experiment_id} / {num_experiments}")
+                experiment_id += 1
+
+                print(f"DS {ds} - ALG {algorithm} - SIM {sim} - run {i}")
 
                 output = subprocess.run(command, stdout=subprocess.PIPE, universal_newlines=True, shell=True, cwd=pathlib.Path(script_path / ".."))
                 print(output.stdout)

@@ -9,6 +9,8 @@ data_path = pathlib.Path(script_path / "../datasets/").resolve()
 metanome_path = pathlib.Path(script_path / "../metanome/").resolve()
 result_dir_path = "/token_similarity"
 result_file = pathlib.Path(script_path / "../results/combined_stats/results_jac.csv").resolve()
+experiment_id = 851
+num_experiments = 1547
 
 datasets = ["TPCH"]
 algorithm = "de.metanome.algorithms.sawfish.SawfishInterface"
@@ -17,8 +19,6 @@ classpath = f'"{metanome_path}/metanome-cli-1.1.1.jar":"{metanome_path}/sawfish-
 for ds in datasets:
     for similarity in range(1, 10):
         for i in range(0, 3):
-            print(f"{ds} - SIM 0.{similarity} - run {i}")
-
             config = f"tokenMode:true,maxMemoryUsagePercentage:70,similarityThreshold:0.{similarity}"
             
             output_file = f'"{result_dir_path}/result_{ds}_0{similarity}_{i}"'
@@ -36,6 +36,11 @@ for ds in datasets:
                 f'--algorithm-config {config} '
                 f'| tail -n 2'
             )
+
+            print(f"Experiment {experiment_id} / {num_experiments}")
+            experiment_id += 1
+
+            print(f"{ds} - SIM 0.{similarity} - run {i}")
 
             output = subprocess.run(command, stdout=subprocess.PIPE, universal_newlines=True, shell=True, cwd=pathlib.Path(script_path / ".."))
             print(output.stdout)
