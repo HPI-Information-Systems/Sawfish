@@ -1,0 +1,18 @@
+\section{Conclusion}
+\label{section:discussion}
+
+This work introduces the formal concept of similarity inclusion dependencies (sINDs), extending traditional inclusion dependencies with a similarity measure.
+First, we identified use cases for sINDs, which include discovering foreign-key candidates and join partners.
+Second, we formalized an sIND definition that extends traditional INDs with an arbitrary similarity measure.
+Third, we presented \sawfish, the first efficient approach to automatically discover sINDs from data.
+It finds all unary sINDs based on the edit-distance and the Jaccard similarity measure.
+\sawfish combines approaches of traditional IND discovery and string similarity joins with a novel sliding-window approach and lazy candidate validation.
+Fourth, we evaluated \sawfish, showing that it scales well in the number of rows, and in the number of columns.
+Compared to a baseline implementation, we outperformed it by a factor of up to~6.5.
+Finally, we examined the sINDs discovered by \sawfish and observed real-world examples indicating joinability.
+
+While sIND discovery is a harder problem than traditional IND discovery, the runtime could be further improved by multithreading or distributing the process.
+As \algorithmName{Sindy}~\cite{dursch2019eval} demonstrated, distribution can significantly improve the performance.
+However, we observed that a single column or even a single sIND candidate can dominate the runtime.
+Therefore, it is not trivial to scale \sawfish's approach to multiple threads or nodes.
+Further future work shall extend \sawfish to discover n-ary sINDs.

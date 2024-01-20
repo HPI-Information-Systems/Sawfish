@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  sawfish-datasets-extraction:
+    build:
+      context: .
+      dockerfile: datasets/Dockerfile
+    volumes:
+      - ./datasets:/datasets
+    image: sawfish-datasets-extraction:latest
+    container_name: sawfish-paper-generation
+    
+  sawfish-result-generation:
+    build:
+      context: .
+      dockerfile: run_scripts/Dockerfile
+    volumes:
+      - ./results:/app/results
+    image: sawfish-result-generation:latest
+    container_name: sawfish-result-generation
+
+  sawfish-plot-generation:
+    build: 
+      context: .
+      dockerfile: plot_generation/Dockerfile
+    volumes:
+      - ./paper_generation/figures:/app/paper_generation/figures
+    image: sawfish-plot-generation:latest
+    container_name: sawfish-plot-generation
+
+  sawfish-paper-generation:
+    build:
+      context: .
+      dockerfile: paper_generation/Dockerfile
+    volumes:
+      - ./final_paper:/usr/src/mytex/results
+    image: sawfish-paper-generation:latest
+    container_name: sawfish-paper-generation
+    entrypoint: []
+    command: >
+      sh -c "cp paperSINDsKaminsky.pdf results/ && tail -f /dev/null"

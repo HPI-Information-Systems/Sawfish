@@ -2,8 +2,9 @@
 /.settings
 .classpath
 .project
-similarity_ind.iml
+*.iml
 .idea
-/results
 /io
 /data/*
+*.DS_Store
+.vscode

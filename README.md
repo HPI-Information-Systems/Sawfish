@@ -38,7 +38,10 @@ To try out more datasets, you can mount a directory containing the appropriate c
 Please note that you might need to change the dataset configuration in Metanome after mounting external csv datasets, since Metanome assumes a certain format.
 
 ## Repeatibility
+
 The datasets that were used in the publication are available [here](https://hpi.de/naumann/projects/repeatability/data-profiling/metanome-ind-algorithms.html).
+To recreate the paper, please follow the instructions provided in [REPRODUCIBILITY_INSTRUCTIONS.md](REPRODUCIBILITY_INSTRUCTIONS.md).
 
 ## Joinability Case Study
+
 We have manually annotated all, true sINDs that were discovered by SAWFISH on all relational tables of [this sample](http://data.dws.informatik.uni-mannheim.de/webtables/2015-07/sample.gz) of the 2015 Web Table Corpus. Our annotations are stored in the `joinability_case_study_annotations.csv` with the following schema `[Dependent Table,Dependent Column Index,Referenced Table,Referenced Column Index,Classification]`. The column indices are 0-indexed. The classification distinguishes sINDs into the following classes: `[Meaningful, Coincidental, Erroneous]`.
