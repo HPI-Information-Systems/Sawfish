@@ -37,7 +37,7 @@ Then, you can access Metanome with SAWFISH installed in your browser at `localho
 To try out more datasets, you can mount a directory containing the appropriate csv files to the container like this `docker run -d -p 8080:8080 -p 8081:8081 -v /path/to/your/data:/app/metanome/backend/WEB-INF/classes/inputData/extern sawfish`.
 Please note that you might need to change the dataset configuration in Metanome after mounting external csv datasets, since Metanome assumes a certain format.
 
-## Repeatibility
+## Repeatability
 
 The datasets that were used in the publication are available [here](https://hpi.de/naumann/projects/repeatability/data-profiling/metanome-ind-algorithms.html).
 To recreate the paper, please follow the instructions provided in [REPRODUCIBILITY_INSTRUCTIONS.md](REPRODUCIBILITY_INSTRUCTIONS.md).
