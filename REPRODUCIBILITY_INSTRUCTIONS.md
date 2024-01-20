@@ -11,6 +11,8 @@ The repository uses Git LFS for the datasets. Therefore, ensure that you have in
 
 Ensure the LFS file has been downloaded by checking if `datasets/SawfishDatasets.zip` exists. You do not need to extract the ZIP file, this will be handled automatically later.
 
+We do not require any special hardware, but we use a main memory threshold of 32GB for the largest dataset. 
+
 ## 2. Repository Overview
 
 The structure of the repository is the following:
