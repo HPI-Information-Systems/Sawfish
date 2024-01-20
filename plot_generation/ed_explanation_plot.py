@@ -19,7 +19,7 @@ import json
 #		3 runs each -> average
 
 datasets = ["CENSUS", "WIKIPEDIA"]
-column_count = {datasets[1]: 14, datasets[0]: 42}
+column_count = {datasets[0]: 42, datasets[1]: 14}
 data_points = 7
 script_path = pathlib.Path(__file__).parent.resolve()
 matplotlib.rcParams['font.family'] = "serif"
@@ -36,10 +36,9 @@ GREEN = "#5b7159"
 script_path = pathlib.Path(__file__).parent.resolve()
 all_results_path = pathlib.Path(script_path.parent / "results").resolve()
 combined_stats_path = pathlib.Path(all_results_path / "combined_stats").resolve()
-edit_distance_timing_stats_path = pathlib.Path(all_results_path / "timingStats" / "edit_distance").resolve()
+edit_distance_timing_stats_path = pathlib.Path(all_results_path / "timingStats").resolve()
 
 write_path = pathlib.Path(script_path.parent / "paper_generation" / "figures").resolve()
-
 all_data_path = pathlib.Path(combined_stats_path / "results_ed.csv").resolve()
 
 combined_stats_path.mkdir(parents=True, exist_ok=True)
@@ -51,20 +50,14 @@ data = pandas.read_csv(all_data_path)
 data = data[(data["dataset"].isin(datasets)) & (data["algorithm"] == "SAWFISH") & (data["row_share"] == 100) &
             (data["column_share"] == 100) & (data["ignore_short"] == False)]
 
-table_offset = {"IMAGE.csv": 0, "IMAGELINKS.csv": 12, "CENSUS.csv": 0}
-
 fig, axis = plt.subplots(1, 2, figsize=(6, 2))
-
 
 index_map = {}
 
 for ds in datasets:
-    value_columns = []
     index_columns = []
-    value_counts = []
     index_counts = []
     for i in range(column_count[ds]):
-        value_columns.append("valueCount_%s" % i)
         index_columns.append("indexMatches_%s" % i)
 
     for ed in range(data_points):
@@ -74,9 +67,6 @@ for ds in datasets:
         index_sum = 0
         for c in index_columns:
             index_sum += timing[c].sum()
-        for c in value_columns:
-            value_sum += timing[c].sum()
-        value_counts.append(value_sum)
         index_counts.append(index_sum)
     index_map[ds] = index_counts
 
@@ -85,21 +75,15 @@ for i,ds in enumerate(datasets):
     lax=axis[i]
 
     plot_data_view = data[(data["dataset"] == ds)]
-    plot_data = plot_data_view.loc[:, ("edit_distance", "runtime", "results")]
-    plot_data = plot_data[["edit_distance", "runtime", "results"]].groupby(["edit_distance"], as_index=False).agg({"runtime": "mean", "results": "min"})
+    plot_data = plot_data_view.loc[:, ("edit_distance", "runtime")]
+    plot_data = plot_data[["edit_distance", "runtime"]].groupby(["edit_distance"], as_index=False).agg({"runtime": "mean"})
 
     rax = lax.twinx()
     l1 = lax.plot(plot_data["edit_distance"], plot_data["runtime"] / 1000, color=YELLOW, label="runtime")
     l2 = rax.plot(plot_data["edit_distance"], index_map[ds], color=GREEN, label="\#index matches", linestyle="dashed")
-    #l3 = lax.plot(plot_data["edit_distance"], value_counts, color="black")
-    #l3 = rax.plot(plot_data["edit_distance"], plot_data["results"])
-    # l3 = rax.plot(x_axis, simple_sinds[ds], color="red")
     if ds != datasets[1]:
-        lax.set_ylim([3, None])
+        lax.set_ylim([0, None])
         lax.yaxis.set_major_locator(MaxNLocator(integer=True))
-    #lax.set_xlabel("Edit Distance")
-    #lax.set_ylabel("Runtime (Seconds)")
-    #rax.set_ylabel("Number of Index Matches\nuntil Similar String Found")
     lax.set_title(ds)
 
 t1 = fig.text(0.51, 0.01, 'Edit Distance Threshold', ha='center')

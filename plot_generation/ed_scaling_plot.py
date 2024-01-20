@@ -55,7 +55,7 @@ for i,ds in enumerate(datasets):
     l2 = rax.plot(plot_data["edit_distance"], plot_data["results"], color="black", label="\#sIND", linestyle="dashed")
     if ds != datasets[1]:
         rax.set_ylim([0, None])
-        lax.set_ylim([3, None])
+        lax.set_ylim([0, None])
         lax.yaxis.set_major_locator(MaxNLocator(integer=True))
     lns = l1 + l2
     lax.set_title(ds if i == 0 else ds + " (log scale)")

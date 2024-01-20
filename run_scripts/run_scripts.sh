@@ -8,11 +8,8 @@ mkdir -p /app/results/edit_distance
 mkdir -p /app/results/row_scaling_ed
 mkdir -p /app/results/row_scaling_jac
 mkdir -p /app/results/related_work
-mkdir -p /app/results/row_scaling
 mkdir -p /app/results/timingStats
 mkdir -p /app/results/token_similarity
-mkdir -p /app/results/timingStats/edit_distance
-mkdir -p /app/results/timingStats/impact
 
 touch /app/results/combined_stats/results_ed.csv
 touch /app/results/combined_stats/results_jac.csv

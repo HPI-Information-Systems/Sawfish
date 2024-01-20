@@ -8,9 +8,9 @@ script_path = pathlib.Path(__file__).parent.resolve()
 data_path = pathlib.Path(script_path / "../datasets/").resolve()
 metanome_path = pathlib.Path(script_path / "../metanome/").resolve()
 sample_path = pathlib.Path(data_path / "current_row_samples.csv").resolve()
-result_dir_path = "/row_scaling_ed/"
+result_dir_path = "/row_scaling_ed"
 
-result_file = pathlib.Path(script_path / "../results/combined_states/results_ed.csv")
+result_file = pathlib.Path(script_path / "../results/combined_stats/results_ed.csv")
 
 datasets = ["CENSUS", "WIKIPEDIA", "TPCH"]
 number_of_datapoints = 10
@@ -25,14 +25,13 @@ for ds in datasets:
     
     for sample_idx in range(number_of_samples):
         selected_rows = set()
-        for data_point in range(number_of_datapoints):
+        for data_point in range(number_of_datapoints - 1):
             unselected_rows = []
             for i in range(1, num_lines):
                 if i not in selected_rows:
                     unselected_rows.append(i)
-            newly_selected = random.sample(unselected_rows, int((num_lines - 1) / 10))
+            newly_selected = random.sample(unselected_rows, int((num_lines - 1) / number_of_datapoints))
             selected_rows.update(newly_selected)
-            print(len(selected_rows))
             with open(sample_path, 'w', newline='') as writefile:
                 writer = csv.writer(writefile, delimiter=';', quotechar='"', escapechar='\\')
                 writer.writerow(header)
@@ -40,7 +39,7 @@ for ds in datasets:
                     writer.writerow(data[row_id])
                 
                 classpath = f'"{metanome_path / "metanome-cli-1.1.1.jar"}":"{metanome_path / "sawfish-1.1-SNAPSHOT.jar"}"'
-                output_file_path = f'"{result_dir_path + f"result_{ds}_{data_point}_{sample_idx}_False"}"'
+                output_file_path = f'"{result_dir_path + f"/result_{ds}_{data_point}_{sample_idx}_False"}"'
                 samples_file_path = f'"{data_path / "current_row_samples.csv"}"'
 
                 command = (

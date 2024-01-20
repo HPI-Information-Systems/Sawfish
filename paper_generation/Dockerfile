@@ -5,4 +5,3 @@ COPY ./paper_generation .
 RUN pdflatex paperSINDsKaminsky.tex && \
     biber paperSINDsKaminsky.bcf && \
     pdflatex paperSINDsKaminsky.tex
-

@@ -14,9 +14,9 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY /plot_generation ./scripts
+COPY /datasets/stats ./datasets/stats
 RUN pip install --no-cache-dir -r ./scripts/requirements.txt
-COPY /results ./results/
+COPY /results ./results
 
-COPY plot_generation/generate_all_plots.sh /app/generate_all_plots.sh
-RUN  chmod +x /app/generate_all_plots.sh
-CMD ["/app/generate_all_plots.sh"]
+RUN  chmod +x /app/scripts/generate_all_plots.sh
+CMD ["/app/scripts/generate_all_plots.sh"]

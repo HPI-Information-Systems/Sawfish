@@ -14,6 +14,6 @@ scripts=(
 
 # Run the general scripts without arguments
 for script in "${scripts[@]}"; do
-    echo Running $script.py
-  python3 -u $script
+    echo Running $script
+  python3 -u scripts/$script
 done

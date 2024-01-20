@@ -10,7 +10,6 @@ COPY /run_scripts ./run_scripts
 COPY /datasets ./datasets
 COPY /results ./results
 COPY /metanome ./metanome
-COPY /target ./target
 
 RUN chmod +x /app/run_scripts/run_scripts.sh
 

@@ -8,9 +8,9 @@ script_path = pathlib.Path(__file__).parent.resolve()
 metanome_path = pathlib.Path(script_path / "../metanome/").resolve()
 data_path = pathlib.Path(script_path / "../datasets/").resolve()
 sample_path = pathlib.Path(data_path / "current_row_samples.csv").resolve()
-result_dir_path = "/row_scaling_jac/"
+result_dir_path = "/row_scaling_jac"
 
-result_file = pathlib.Path(script_path / "../results/combined_states/results_jac.csv")
+result_file = pathlib.Path(script_path / "../results/combined_stats/results_jac.csv")
 
 datasets = ["CENSUS", "WIKIPEDIA", "TPCH", "IMDB"]
 number_of_datapoints = 10
@@ -38,7 +38,7 @@ for ds in datasets:
                 for row_id in selected_rows:
                     writer.writerow(data[row_id])
             classpath = f'"{metanome_path / "metanome-cli-1.1.1.jar"}":"{metanome_path / "sawfish-1.1-SNAPSHOT.jar"}"'
-            filepath = f'"{result_dir_path + f"result_{ds}_{data_point}_{sample_idx}_True"}"'
+            filepath = f'"{result_dir_path + f"/result_{ds}_{data_point}_{sample_idx}_True"}"'
             filespath = f'"{data_path / "current_row_samples.csv"}"' 
 
             max_heap_size = "Xmx32g" if ds == "IMDB" else "Xmx8g"

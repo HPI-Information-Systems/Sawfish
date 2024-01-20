@@ -557,7 +557,7 @@ public class Sawfish {
 
     private void writeTimingStatsToFile(ArrayList<TimingStats> timingStats, long indexingTime) throws AlgorithmExecutionException {
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter("target/timingStats.csv"));
+            BufferedWriter writer = new BufferedWriter(new FileWriter("results/timingStats.csv"));
             StringJoiner stringJoiner = new StringJoiner(",");
             stringJoiner.add("dependentColumn/referencedColumn");
             for (int i = 0; i < timingStats.size(); i++) {

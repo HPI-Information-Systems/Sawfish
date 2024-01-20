@@ -4,7 +4,6 @@
 .project
 *.iml
 .idea
-/results
 /io
 /data/*
 *.DS_Store

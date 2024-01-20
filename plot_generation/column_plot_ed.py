@@ -6,13 +6,11 @@ import pandas
 
 # column_scaling data
 # separate plot for 2 DS:
-#	5 data points
+#	10 data points
 #		30 runs each -> box_plot
 
 datasets = ["CENSUS", "WIKIPEDIA", "TPCH"]
-data_points = 5
 column_count = {datasets[0]: 42, datasets[1]: 11, datasets[2]: 55}
-script_path = pathlib.Path(__file__).parent.resolve()
 matplotlib.rcParams['font.family'] = "serif"
 matplotlib.rcParams['font.size'] = "11"
 matplotlib.rcParams["figure.figsize"] = (4, 2.5)
@@ -24,13 +22,11 @@ GREEN = "#5b7159"
 LIGHT_BLUE = "#696f9b"
 LIGHT_GREEN = "#92ab8e"
 script_path = pathlib.Path(__file__).parent.resolve()
-all_results_path = pathlib.Path(script_path.parent / "results").resolve()
-combined_stats_path = pathlib.Path(all_results_path / "combined_stats").resolve()
-all_results_csv = pathlib.Path(combined_stats_path / "results_ed.csv").resolve()
+all_results_path = pathlib.Path(script_path.parent / "results" / "combined_stats").resolve()
+all_results_csv = pathlib.Path(all_results_path / "results_ed.csv").resolve()
 write_path = pathlib.Path(script_path.parent / "paper_generation" / "figures").resolve()
 
 all_results_path.mkdir(parents=True, exist_ok=True)
-combined_stats_path.mkdir(parents=True, exist_ok=True)
 write_path.mkdir(parents=True, exist_ok=True)
 
 # run_id,algorithm,dataset,edit_distance,row_share,column_share,ignore_short,experiment,runtime,results
@@ -55,7 +51,7 @@ for i,ds in enumerate(datasets):
 
     for name, group in box_plot_data:
         width = 0.5 if ds == datasets[1] else 2 if ds == datasets[0] else 3
-        box = ax.boxplot(group["runtime"], positions=[name], showmeans=True, meanline=True, patch_artist=True, widths=width, boxprops=dict(facecolor="none"),
+        box = ax.boxplot(group["runtime"], positions=[name[0]], showmeans=True, meanline=True, patch_artist=True, widths=width, boxprops=dict(facecolor="none"),
                           meanprops=dict(color=YELLOW), medianprops=dict(color=GREEN))
     ax.plot(line_data["column_share"], line_data["runtime"], color=YELLOW, zorder=5, linestyle="dashed")
     ax.set_ylim([0, None])

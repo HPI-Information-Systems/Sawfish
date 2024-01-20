@@ -21,15 +21,20 @@ GREEN = "#5b7159"
 LIGHT_BLUE = "#696f9b"
 LIGHT_GREEN = "#92ab8e"
 script_path = pathlib.Path(__file__).parent.resolve()
-all_data_token_path = pathlib.Path(script_path / "results_jac.csv").resolve()
-all_data_path = pathlib.Path(script_path / "results_ed.csv").resolve()
+all_results_path = pathlib.Path(script_path.parent / "results" / "combined_stats").resolve()
+all_results_csv = pathlib.Path(all_results_path / "results_ed.csv").resolve()
+all_token_results_csv = pathlib.Path(all_results_path / "results_jac.csv").resolve()
+write_path = pathlib.Path(script_path.parent / "paper_generation" / "figures").resolve()
+
+all_results_path.mkdir(parents=True, exist_ok=True)
+write_path.mkdir(parents=True, exist_ok=True)
 
 datasets = ["CENSUS", "WIKIPEDIA", "TPCH", "IMDB"]
 
-data = pandas.read_csv(all_data_path)
+data = pandas.read_csv(all_results_csv)
 data = data[(data["dataset"].isin(datasets)) & (data["edit_distance"] == 1) & (data["algorithm"] == "SAWFISH") &
-             (data["column_share"] == 100) & (data["ignore_short"] == True)]
-token_data = pandas.read_csv(all_data_token_path)
+             (data["column_share"] == 100) & (data["ignore_short"] == False)]
+token_data = pandas.read_csv(all_token_results_csv)
 token_data = token_data[(token_data["dataset"].isin(datasets)) & (token_data["similarity"] == 0.4) & (token_data["algorithm"] == "SAWFISH") & 
                         (token_data["column_share"] == 100)]
 
@@ -47,7 +52,7 @@ for i,ds in enumerate(datasets):
     for i in range(data_points):
         x_axis.append((i + 1) * 10)
     for tok in tokenMode:
-        if tok == tokenMode[0]:
+        if tok == tokenMode[1]:
             plot_data_view = data[(data["dataset"] == ds)]
         else:
             plot_data_view = token_data[(token_data["dataset"] == ds)]
@@ -58,7 +63,7 @@ for i,ds in enumerate(datasets):
         stdevs = plot_data[["row_share", "runtime", "results"]].groupby(["row_share"], as_index=False).agg(
             {"runtime": np.std,"results": np.std})
 
-        color = YELLOW if tok == tokenMode[1] else BLUE
+        color = YELLOW if tok == tokenMode[0] else BLUE
         l1 = lax.errorbar(means["row_share"], means["runtime"], yerr=stdevs["runtime"], linestyle="solid", color=color, label="runtime")
         l2 = rax.errorbar(means["row_share"], means["results"], yerr=stdevs["results"], linestyle="dashed", color=color, label="#sIND")
         legend_lines.append(l1)
@@ -77,5 +82,5 @@ t3 = fig.text(0.99, 0.5, "Number of sINDs", va='center', rotation='vertical')
 lgd = fig.legend(legend_lines, labs, ncol=2, loc='lower center', bbox_to_anchor=(0.5, -0.15))
 fig.set_tight_layout(True)
 
-plt.savefig("row_scaling.pdf", bbox_extra_artists=(lgd, t1, t2, t3), dpi=300, bbox_inches='tight')
+plt.savefig(pathlib.Path(write_path / "row_scaling.pdf"), bbox_extra_artists=(lgd, t1, t2, t3), dpi=300, bbox_inches='tight')
 # plt.show()

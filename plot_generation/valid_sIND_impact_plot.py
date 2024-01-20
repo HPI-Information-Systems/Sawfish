@@ -22,15 +22,16 @@ GREEN = "#5b7159"
 
 script_path = pathlib.Path(__file__).parent.resolve()
 all_results_path = pathlib.Path(script_path.parent / "results").resolve()
-result_path = pathlib.Path(all_results_path / "row_scaling").resolve()
+result_path = pathlib.Path(all_results_path / "edit_distance").resolve()
 combined_stats_path = pathlib.Path(all_results_path / "combined_stats").resolve()
-target_path = pathlib.Path(all_results_path / "timingStats" / "row_scaling").resolve()
+timing_stats_path = pathlib.Path(all_results_path / "timingStats").resolve()
 write_path = pathlib.Path(script_path.parent / "paper_generation" / "figures").resolve()
+dataset_stats_path = pathlib.Path(script_path.parent / "datasets" / "stats").resolve()
 
 all_results_path.mkdir(parents=True, exist_ok=True)
 result_path.mkdir(parents=True, exist_ok=True)
 combined_stats_path.mkdir(parents=True, exist_ok=True)
-target_path.mkdir(parents=True, exist_ok=True)
+timing_stats_path.mkdir(parents=True, exist_ok=True)
 write_path.mkdir(parents=True, exist_ok=True)
 
 datasets = ["CENSUS", "WIKIPEDIA", "TPCH"]
@@ -50,7 +51,7 @@ for d in datasets:
     invalid_time = []
     invalid_count = []
 
-    with open(pathlib.Path(combined_stats_path / (d + "_id_to_column.csv"))) as csv_file:
+    with open(pathlib.Path(dataset_stats_path / (d + "_id_to_column.csv"))) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         for row in csv_reader:
             column_dict[row[1]] = int(row[0])
@@ -68,12 +69,12 @@ for d in datasets:
 
     result_file.close()
 
-    with open(pathlib.Path(combined_stats_path / (d + "_stats.csv"))) as csv_file:
+    with open(pathlib.Path(dataset_stats_path / (d + "_distincts.csv"))) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         for row in csv_reader:
             column_size.append(int(row[0]))
 
-    with open(pathlib.Path(target_path / ("timingStats_" + d + "_0_0.csv"))) as csv_file:
+    with open(pathlib.Path(timing_stats_path / ("timingStats_" + d + "_0_0.csv"))) as csv_file:
         is_first = True
         csv_reader = csv.reader(csv_file, delimiter=',')
         for row in csv_reader:

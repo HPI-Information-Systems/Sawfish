@@ -11,13 +11,13 @@ config_path = pathlib.Path(script_path / "selected_columns_token.txt").resolve()
 data_path = pathlib.Path(script_path / "../datasets/").resolve()
 metanome_path = pathlib.Path(script_path / "../metanome/").resolve()
 sample_path = pathlib.Path(data_path / "current_samples.csv").resolve()
-result_dir_path = "/column_scaling_jac/"
+result_dir_path = "/column_scaling_jac"
 result_file = pathlib.Path(script_path / "../results/combined_stats/results_jac.csv")
 
 datasets = ["CENSUS", "WIKIPEDIA", "TPCH", "IMDB"]
 column_sizes = {datasets[0]: [2, 6, 10, 14, 18, 22, 26, 30, 34, 38], datasets[1]: [2, 3, 4, 5, 6, 7, 8, 9, 10], datasets[2]: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50], datasets[3]: [4, 13, 22, 31, 40, 49, 58, 67, 76, 85]}
 column_count = {datasets[0]: 42, datasets[1]: 11, datasets[2]: 55, datasets[3]: 94}
-number_of_samples = 10
+number_of_samples = 30
 column_combinations = {datasets[0]: [], datasets[1]: [], datasets[2]: [], datasets[3]: []}
 number_of_process = 8
 
@@ -83,8 +83,10 @@ for ds in datasets:
             output_file_path = f'"{result_dir_path}/result_{ds}_{len(current_combination)}_{idx}"'
             samples_file_path = f'"{data_path / "current_samples.csv"}"'
 
+            max_heap_size = "Xmx32g" if ds == "IMDB" else "Xmx8g"
+
             command = (
-                f'java -Xmx8g -cp {classpath} de.metanome.cli.App '
+                f'java -{max_heap_size} -cp {classpath} de.metanome.cli.App '
                 f'-o file:{output_file_path} '
                 f'--algorithm de.metanome.algorithms.sawfish.SawfishInterface '
                 f'--files {samples_file_path} '

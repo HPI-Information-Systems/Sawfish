@@ -14,16 +14,12 @@ datasets = ["TPCH"]
 algorithm = "de.metanome.algorithms.sawfish.SawfishInterface"
 classpath = f'"{metanome_path}/metanome-cli-1.1.1.jar":"{metanome_path}/sawfish-1.1-SNAPSHOT.jar"'
 
-with open(result_file, 'a') as f:
-    f.write("\n")
-
 for ds in datasets:
     for similarity in range(1, 10):
         for i in range(0, 3):
             print(f"{ds} - SIM 0.{similarity} - run {i}")
 
-            config = f"runBinderFirst:false ignoreShortStrings:false measureTime:false tokenMode:true maxMemoryUsagePercentage:70 similarityThreshold:0.{similarity}"
-            
+            config = f"tokenMode:true,maxMemoryUsagePercentage:70,similarityThreshold:0.{similarity}"
             
             output_file = f'"{result_dir_path}/result_{ds}_0{similarity}_{i}"'
             input_file = f'"{data_path}/{ds}.csv"'

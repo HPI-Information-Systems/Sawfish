@@ -9,8 +9,8 @@ config_path = pathlib.Path(script_path / "selected_columns.txt").resolve()
 data_path = pathlib.Path(script_path / "../datasets/").resolve()
 sample_path = pathlib.Path(data_path / "current_samples.csv").resolve()
 metanome_path = pathlib.Path(script_path / "../metanome/").resolve()
-result_dir_path = "/column_scaling_ed/"
-result_file = pathlib.Path(script_path / "../results/combined_states/results_ed.csv")
+result_dir_path = "/column_scaling_ed"
+result_file = pathlib.Path(script_path / "../results/combined_stats/results_ed.csv")
 
 
 datasets = ["CENSUS", "WIKIPEDIA", "TPCH"]
@@ -21,7 +21,6 @@ column_combinations = {datasets[0]: [], datasets[1]: [], datasets[2]: []}
 
 for ds in datasets:
     for column_size in column_sizes[ds]:
-        print(column_size)
         current_combinations_set = set()
         while len(current_combinations_set) != number_of_samples:
             if ds == datasets[1] and column_size == 10 and len(current_combinations_set) > 10:
@@ -85,11 +84,8 @@ for ds in datasets:
             )
             output_string = "DS %s - LEN %s - run %s" % (ds, len(current_combination), idx)
             print(output_string)
-            output = subprocess.run(command, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
+            output = subprocess.run(command, stdout=subprocess.PIPE, universal_newlines=True, shell=True, cwd=pathlib.Path(script_path / ".."))
             print(output.stdout)
-
-            moveCommand = "mv target/timingStats.csv ../results/column_scaling/target/timingStats_%s_%s_%s.csv" % (ds, len(current_combination), idx)
-            subprocess.run(moveCommand, stdout=subprocess.PIPE, universal_newlines=True, shell=True)
 
             if "Error" not in output.stdout.lower():
                 with open(result_file, 'a') as f:

@@ -50,8 +50,6 @@ for ds in datasets:
                      f'| tail -n 2'
                 )
 
-                print(command)
-
                 output = subprocess.run(command, stdout=subprocess.PIPE, universal_newlines=True, shell=True, cwd=pathlib.Path(script_path / ".."))
                 print(output.stdout)
 
