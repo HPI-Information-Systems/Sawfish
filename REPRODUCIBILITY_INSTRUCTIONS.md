@@ -26,7 +26,7 @@ The structure of the repository is the following:
 
 ## 3. Execution
 
-We offer different ways to execute Sawfish, but each one of them requires docker and docker compose. If it is not yet installed on your machine, please follow these instructions: <https://docs.docker.com/engine/install/>
+We offer different ways to execute Sawfish, but each one of them requires `docker` and `docker-compose`. If it is not yet installed on your machine, please follow these instructions: <https://docs.docker.com/engine/install/>
 
 Each method differentiates in the ability to customize the output.
 
