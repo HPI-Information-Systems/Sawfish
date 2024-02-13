@@ -63,7 +63,7 @@ for ds in datasets:
 for ds in (datasets + ["TPCH"]):
     for edit_distance in range(2):
         for i in range(3):
-            output_file = f'"{result_dir_path}/timingStats_{ds}_{edit_distance}_{i}"'
+            output_file = f'"{result_dir_path}/result_{ds}_{edit_distance}_{i}"'
             input_file = f'"{data_path}/{ds}.csv"'
 
             config = f'editDistanceThreshold:{edit_distance},measureTime:true,maxMemoryUsagePercentage:70'

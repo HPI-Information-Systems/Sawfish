@@ -56,7 +56,7 @@ for d in datasets:
         for row in csv_reader:
             column_dict[row[1]] = int(row[0])
 
-    result_file = open(pathlib.Path(result_path / ("result_" + d + "_0_0_inds")))
+    result_file = open(pathlib.Path(result_path / ("result_" + d + "_1_0_inds")))
     while True:
         line = result_file.readline()
         if not line:
@@ -74,7 +74,7 @@ for d in datasets:
         for row in csv_reader:
             column_size.append(int(row[0]))
 
-    with open(pathlib.Path(timing_stats_path / ("timingStats_" + d + "_0_0.csv"))) as csv_file:
+    with open(pathlib.Path(timing_stats_path / ("timingStats_" + d + "_1_0.csv"))) as csv_file:
         is_first = True
         csv_reader = csv.reader(csv_file, delimiter=',')
         for row in csv_reader:
